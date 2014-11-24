@@ -1,0 +1,34 @@
+/* Long word text wrapping in panel bodies */
+
+.panel-body {
+  padding: 15px;
+}
+
+.panel-body:before,
+.panel-body:after {
+  display: table;
+  content: " ";
+}
+
+.panel-body:after {
+  clear: both;
+}
+
+.panel-body:before,
+.panel-body:after {
+  display: table;
+  content: " ";
+}
+
+.panel-body:after {
+  clear: both;
+}
+
+.panel-body p {
+    word-wrap: break-word;
+}
+
+.table-responsive
+{
+    overflow-x: auto;
+}

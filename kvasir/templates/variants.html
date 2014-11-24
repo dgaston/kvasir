@@ -1,0 +1,46 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<div class="well well-large" style="height: 160px;">
+    <div class="pull-right">
+        <img src="{{user.avatar(128)}}" class="img-polaroid">
+    </div>
+    <h1>{{user.nickname}}</h1>
+    {% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
+    {% if user.last_seen %}<p><em>Last seen on: {{user.last_seen}}</em></p>{% endif %}
+    <p>Role: {% if user.role == 2 %} Admin
+             {% elif user.role == 1 %} User
+             {% else %}Guest
+             {% endif %}
+    </p>
+    <p>
+		{% if user.id == g.user.id %}
+        <a href="{{url_for('edit')}}">Edit your profile</a>
+		{% endif %}
+    </p>
+</div>
+<div>
+<table cellpadding="10">
+    <tr>
+        <td><b><center>User ID</center></b></td>
+        <td><b><center>experiment</center></b></td>
+        <td><b><center>Version</center></b></td>
+        <td><b><center>Results Directory</center></b></td>
+        <td><b><center>Date</center></b></td>
+    </tr>
+{% for analysis in analyses %}
+    <div>
+        <tr>
+            <td>{{analysis.user_id}}</td>
+            <td>{{analysis.experiment}}</td>
+             <td>{{analysis.version}}</td>
+            <td>{{analysis.path}}</td>
+            <td>{{analysis.date}}</td>
+        </tr>
+    </div>
+{% endfor %}
+</table>
+</div>
+{% endblock %}

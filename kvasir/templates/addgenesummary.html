@@ -1,0 +1,49 @@
+<!-- extend base layout -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-2 text-left">
+	
+	</div>
+	
+	<div class="col-md-10">
+		<p>Gene: {{gene.ensembl_id}}</p>
+	
+		<form class="form-horizontal" action="" method="post" name="addsummary" enctype="multipart/form-data">
+			{{form.hidden_tag()}}
+
+			<div class="control-group{% if form.errors.type %} error{% endif %}">
+				<label class="control-label" for="type">Type:</label>
+				<div class="controls">
+					{{ form.type(maxlength = 64, class = "span4") }}
+						{% for error in form.errors.type %}
+						<span class="help-inline">[{{error}}]</span><br>
+						{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.text %} error{% endif %}">
+				<label class="control-label" for="text">Text:</label>
+				<div class="controls">
+					{{ form.text(class = "span4") }}
+						{% for error in form.errors.text %}
+						<span class="help-inline">[{{error}}]</span><br>
+						{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<div class="controls">
+					<input class="btn btn-primary" type="submit" value="Add Summary">
+				</div>
+			</div>
+			
+		</form>	
+
+	</div>
+	
+</div>
+{% endblock %}
+

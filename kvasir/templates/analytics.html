@@ -1,0 +1,136 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+
+<!-- Begin HTML -->
+
+<div class='container' id='main-container'>
+	<div class='content'>
+		<div class='container' style='font: 10px sans-serif;'>
+			<h3>Visualisation of Selected Variants</h3>
+			<div class='row-fluid'>
+				<div class='remaining-graphs span8'>
+					
+					<div class='row-fluid'>
+						<div class='bubble-graph span12' id='dc-bubble-graph'>
+							<h4>Average Rating (x-axis), Average Number of Reviews (y-axis), Number of Business' (Size)</h4>
+						</div>
+					</div>
+					
+					<div class='row-fluid'>
+						<div class='pie-graph span4' id='dc-pie-graph'>
+							<h4>Average Rating in Stars (Pie)</h4>
+						</div>
+						<div class='pie-graph span4' id='dc-volume-chart'>
+							<h4>Average Rating in Stars / Number of Reviews (Bar)</h4>
+						</div>
+						<div class='pie-graph span4' id='dc-line-chart'>
+							<h4>Average Rating in Stars / Number of Reviews (Line)</h4>
+						</div>
+					</div>
+					
+					<!-- /other little graphs go here -->
+					<div class='row-fluid'>
+						<div class='span12 table-graph'>
+							<h4>Data Table for Filtered Variants</h4>
+							<table id="results" class='display table table-hover table-condensed table-responsive dc-data-table' id='dc-table-graph'>
+								<thead>
+									<tr>
+										{% for column in header %}
+											<th>{{column}}</th>
+										{% endfor %}
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+								<tfoot>
+									<tr>
+										{% for column in header %}
+											<th>{{column}}</th>
+										{% endfor %}
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+					
+				</div>
+				<div class='remaining-graphs span4'>
+					<div class='row-fluid'>
+						<div class='row-graph span12' id='dc-row-graph' style='color:black;'>
+							<h4>Variants Per Gene</h4>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!-- Javascript -->
+
+<script>
+	/* Load data from JSON */
+	d3.json({{file}}, function (variant_data) {
+	 
+		// DC.js chart objects
+		var bubbleChart = dc.bubbleChart("#dc-bubble-graph");
+		var pieChart = dc.pieChart("#dc-pie-graph");
+		var dataTable = dc.dataTable("#dc-table-graph");
+		var rowChart = dc.rowChart("#dc-row-graph");
+ 
+		//Setup Crossfilter
+		var ndx = crossfilter(variant_data);
+	 
+		//Setup Necessary Crossfilter Dimensions
+ 
+		var geneDimension = ndx.dimension(function (d) { return d.gene; });
+		var variantDimension = ndx.dimension(function (d) { return d.variant_id; });
+		//var filterDimension = ndx.dimension(function (d) { return d.filter; });
+		//var typeDimension = ndx.dimension(function (d) { return d.type; });
+		var omimDimension = ndx.dimension(function (d) { return d.in_omim; });
+		var clinvarDimension = ndx.dimension(function (d) { return d.clinvar_sig; });
+		//var cpgDimension = ndx.dimension(function (d) { return d.in_cpg_island; });
+		//var conservedDimension = ndx.dimension(function (d) { return d.is_conserved; });
+		var lofDimension = ndx.dimension(function (d) { return d.is_lof; });
+		//var biotypeDimension = ndx.dimension(function (d) { return d.biotype; });
+		var impactDimension = ndx.dimension(function (d) { return d.impact; });
+		var severityDimension = ndx.dimension(function (d) { return d.impact_severity; });
+	
+		//Setup Necessary Crossfilter Groups
+		var variantGroupsByGene = geneDimension.group().reduceCount.(function (d) { return d.gene });
+		var variantGroupsBySeverity = severityDimension.group().reduceCount.(function (d) { return d.impact_severity });
+		var variantGroupsByImpact = impactDimension.group().reduceCount.(function (d) { return d.impact });
+	
+		//Create Visualizations
+		/*
+		dataTable.width(800).height(800)
+    		.dimension(businessDimension)
+			.group(function(d) { return "List of all Selected Businesses"
+			 })
+			.size(100)
+			.columns([
+				function(d) { return d.name; },
+				function(d) { return d.city; },
+				function(d) { return d.stars; },
+				function(d) { return d.review_count; },
+				function(d) { return '<a href=\"http://maps.google.com/maps?z=12&t=m&q=loc:' + d.latitude + '+' + d.longitude +"\" target=\"_blank\">Map</a>"}
+			])
+			.sortBy(function(d){ return d.stars; })
+			// (optional) sort order, :default ascending
+			.order(d3.ascending);
+	 		*/
+	
+		//Render
+			 
+		dc.renderAll();
+	});
+	
+</script>
+
+
+
+{% endblock %}

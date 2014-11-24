@@ -1,0 +1,356 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<div class="col-md-12">
+
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6>Name</h6>
+				</div>
+				<div class="panel-body">
+					<p>{{database.short_name}}</p>
+				</div>
+			</div>
+		</div>
+			
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6>Location</h6>
+				</div>
+				<div class="panel-body">
+					{{database.file}}
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<form class="form-horizontal" action="" method="post" name="addsample" enctype="multipart/form-data">
+		{{form.hidden_tag()}}
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6>Samples in GEMINI Database</h6>
+				</div>
+				<div class="panel-body">
+					<div class="table-responsive">
+					<table class="table table-condensed table-responsive">
+						<thead>
+							<tr>
+								<th><b><center>Sample</center></b></th>
+								<th><b><center>Phenotype</center></b></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for sample in samples %}
+								<tr>
+									<td><center>{{sample.name}}</center></td>
+									<td>
+									{% if sample.phenotype == '2' %}
+							 			Affected
+									{% elif sample.phenotype == '1' %} 
+										Unaffected
+									{% elif sample.phenotype == '0' %} 
+										Unknown
+									{% elif sample.phenotype == '-9' %} 
+										Unknown
+						 			{% else %}
+										Not Specified
+						 			{% endif %}
+									</td>
+								</tr>
+							{% endfor %}
+							<tr>
+								<td>Filter for Affected Samples</td>
+								<td>{{form.affected_filter}}</td>
+								<td>{{form.affected_number}}</td>
+							</tr>
+							<tr>
+								<td>Filter for Unaffected Samples</td>
+								<td>{{form.unaffected_filter}}</td>
+								<td>{{form.unaffected_number}}</td>
+							</tr>
+							<tr>
+								<td>Filter for Unknown status Samples</td>
+								<td>{{form.unknown_filter}}</td>
+								<td>{{form.unknown_number}}</td>
+							</tr>
+							<tr>
+								<td>Special Inheritance Models</td>
+								<td>{{form.mode}}</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6>Samples in Projects Database</h6>
+				</div>
+				<div class="panel-body">	
+					<table class="table table-hover table-condensed table-responsive">
+						<thead>
+							<tr>
+								<th><b><center>Sample ID</center></b></th>
+								<th><b><center>Status</center></b></th>
+								<th><b><center>NGS Status</center></b></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for sample in project_samples %}
+								<tr>
+									<td>{{sample.sample_id_string}}</td>
+									<td>{{sample.status}}</td>
+									<td>{{sample.ngs_sequencing}}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	
+	</div>
+	
+	<div class="row">
+		
+		<div class="col-md-6">
+				
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6>Allele Frequency Constraints</h6>
+				</div>
+				<div class="panel-body">
+					<div class="table-responsive">
+					<table class="table table-hover table-condensed table-responsive">
+						<tbody>
+							<tr>
+								<td colspan="3">
+								<p>
+									The maximum allowable minor allele frequency for the provided population(s). Set to -1
+									to ignore in a population set (May be best in case of potentially large allele frequency
+									differences between specific populations).
+								</p>
+								</td>
+							</tr>
+							<tr>
+								<td>EVS European America{{form.evs_eur}}</td>
+								<td>EVS African American{{form.evs_afr}}</td>
+								<td>EVS All Populations{{form.evs_all}}</td>
+							</tr>
+							<tr>
+								<p>
+								<td>1000G European{{form.kg_eur}}</td>
+								<td>1000G African{{form.kg_afr}}</td>
+								<td>1000G American{{form.kg_amr}}</td>
+								<td>1000G Asian{{form.kg_asn}}</td>
+								<td>1000G All Populations{{form.kg_all}}</td>
+								</p>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+				</div>
+			</div>
+		</div>
+			
+			<div class="col-md-6">
+				<div class="row">
+				
+					<div class="col-md-12">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h6>Variant Impact Constraints</h6>
+						</div>
+						<div class="panel-body">	
+							<table class="table table-hover table-condensed table-responsive">
+								<tbody>
+									<tr>
+										<td>
+											<p>
+											Select the level of variant impact to retain. All selects no filter. 
+											Impacts are defined by snpEff and are described in detail 
+											<a href="http://snpeff.sourceforge.net/SnpEff_manual.html#eff" target="new">here</a>
+											</p>
+										</td>
+									</tr>
+									<tr>
+										<td>{{form.impacts}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						</div>
+						
+						<div class="col-md-12">
+						<div class="panel panel-info">
+						<div class="panel-heading">
+							<h6>Gene Level Filters</h6>
+						</div>
+						<div class="panel-body">	
+							<table class="table table-hover table-condensed table-responsive">
+								<tbody>
+									<tr>
+										<td>
+											<p>
+											Select a gene level filtering strategy to apply. Commonly mutated genes includes keratin-associated genes, mucins,
+											taste receptors, and olfactory receptors as they are extremely unlikely to cause disease.
+											More information about the available panels can be found <a href={{ url_for('panels')}} target="new">here</a>
+											</p>
+										</td>
+									</tr>
+									<tr>
+										<td>{{form.filter_method}}</td>
+									</tr>
+									<tr>
+										<td>{{form.gene_filter}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						</div>
+					
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	
+	</div>
+	
+	<div class-"row>
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6>Genomic Interval(s) Restriction</h6>
+				</div>
+				<div class="panel-body">	
+					<p>
+					Specify in interval format (chr#:start-stop)
+					</p>
+					{{ form.hidden_tag() }}
+					{{form.intervals(cols = 64, rows = 6, class = "span4")}}
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6>GEMINI Query</h6>
+				</div>
+				<div class="panel-body">	
+					<div class="table-responsive">
+					<table class="table table-hover table-condensed table-responsive">
+						<tbody>
+							<tr>
+								<td>
+									<p>
+									Select a set of columns from the GEMINI database to query against. We have provided several 
+									preset options with the default being all columns in the variant and gene_detailed tables
+									along with sample genotypes. A description of the GEMINI table scheme can be found
+									<a href="http://gemini.readthedocs.org/en/latest/content/database_schema.html" target="new">here</a>
+									</p>
+								</td>
+							<tr>
+							<tr>
+								<td>{{form.query}}</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+				</div>
+			</div>
+			
+			<div class-"row">
+				<div class="control-group">
+					<div class="controls">
+						<div id="formsubmitbutton">
+							<div class="col-md-4">
+								&nbsp
+							</div>
+							<div class="col-md-4">
+								<input class="btn btn-primary" type="submit" value="Submit GEMINI Query" onclick="ButtonClicked()">
+							</div>
+							<div class="col-md-4">
+								&nbsp
+							</div>
+						</div>
+						
+						<!--
+						<div id="buttonreplacement" style="display:none">
+							<div class="col-md-4">
+								<p>The GEMINI Query is now running. This may take a few minutes depending on the
+								size of the database and paramaters used, which effect the number of variants returned.
+								</p>
+							</div>
+							<div class="col-md-4">
+								<img src="{{ url_for('static', filename='img/loading.gif') }}">
+							</div>
+							<div class="col-md-4">
+								&nbsp
+							</div>
+						</div>
+						-->
+						
+					</div>
+				</div>
+			</div>
+			
+			<!--
+			<script type="text/javascript">
+				/*
+				   Replacing Submit Button with 'Loading' Image
+				   Version 2.0
+				   December 18, 2012
+
+				   Will Bontrager Software, LLC
+				   http://www.willmaster.com/
+				   Copyright 2012 Will Bontrager Software, LLC
+
+				   This software is provided "AS IS," without 
+				   any warranty of any kind, without even any 
+				   implied warranty such as merchantability 
+				   or fitness for a particular purpose.
+				   Will Bontrager Software, LLC grants 
+				   you a royalty free license to use or 
+				   modify this software provided this 
+				   notice appears on all copies. 
+				*/
+				function ButtonClicked()
+				{
+				   document.getElementById("formsubmitbutton").style.display = "none"; // to undisplay
+				   document.getElementById("buttonreplacement").style.display = ""; // to display
+				   return true;
+				}
+				var FirstLoading = true;
+				function RestoreSubmitButton()
+				{
+				   if( FirstLoading )
+				   {
+					  FirstLoading = false;
+					  return;
+				   }
+				   document.getElementById("formsubmitbutton").style.display = ""; // to display
+				   document.getElementById("buttonreplacement").style.display = "none"; // to undisplay
+				}
+				// To disable restoring submit button, disable or delete next line.
+				document.onfocus = RestoreSubmitButton;
+			</script>
+			-->
+			
+		</div>
+	
+	</div>
+	</form>
+</div>
+{% endblock %}

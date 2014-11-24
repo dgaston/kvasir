@@ -1,0 +1,73 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+
+<div class="row">
+	<div class="col-md-2 text-left">
+		<ul class="list-group" data-spy="affix" data-offset-top="100" data-offset-bottom="200">
+			<a href="#Info" class="list-group-item">Info</a>
+			<a href="#Tasks" class="list-group-item">Tasks</a>
+		</ul>
+	</div>
+	
+	<div class="col-md-10">
+		
+		<a name="Info"></a> 
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3>{{user.nickname}}</h3>
+			</div>
+			<div class="panel-body">
+				<div class="pull-right">
+        			<img src="{{user.avatar(128)}}" class="img-polaroid">
+        		</div>
+        			
+				{% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
+				{% if user.last_seen %}<p><em>Last seen on: {{user.last_seen}}</em></p>{% endif %}
+				
+				<p>Roles: {% for role in user.roles %} {{role.name}}&nbsp {% endfor %}
+				</p>
+				<p>{% if user.id == g.user.id %}<a href="{{url_for('edit')}}" class="btn btn-success">Edit your profile</a>{% endif %}</p>
+				
+    		</div>
+		</div>
+		
+		<a name="Tasks"></a> 
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<div class="row">
+						<div class="col-md-10">
+							<h4>Tasks</h4> 
+						</div>
+						<div class="col-md-2">
+							<a href="{{ url_for('addtask') }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus-sign"></span> Add Task</a>
+						</div>
+					</div>
+			</div>
+			<div class="panel-body">
+				<table class="table table-condensed table-responsive">
+					<thead>
+						<tr>
+							<th>Project</th>
+							<th>Description</th>
+							<th>Priority</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for task in user.tasks %}
+							<tr>
+								<td>{{task.project.project_name}}</td>
+								<td>{{task.description}}</td>
+								<td>{{task.priority}}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+	</div>
+</div>
+{% endblock %}

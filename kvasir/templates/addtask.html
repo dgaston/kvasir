@@ -1,0 +1,80 @@
+<!-- extend base layout -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-2 text-left">
+	
+	</div>
+	
+	<div class="col-md-10">
+		<form class="form-horizontal" action="" method="post" name="addtask" enctype="multipart/form-data">
+			{{form.hidden_tag()}}
+
+			<div class="control-group{% if form.errors.project %} error{% endif %}">
+				<label class="control-label" for="project">Project:</label>
+				<div class="controls">
+					{{ form.project}}
+						{% for error in form.errors.project %}
+						<span class="help-inline">[{{error}}]</span><br>
+						{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.assigned %} error{% endif %}">
+				<label class="control-label" for="assigned">Assigned User:</label>
+				<div class="controls">
+					{{ form.assigned }}
+						{% for error in form.errors.assigned %}
+						<span class="help-inline">[{{error}}]</span><br>
+						{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.priority %} error{% endif %}">
+				<label class="control-label" for="priority">Priority:</label>
+				<div class="controls">
+					{{ form.priority}}
+					{% for error in form.errors.priority %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<!--
+			<div class="control-group{% if form.errors.due %} error{% endif %}">
+				<label class="control-label" for="due">Due Date (Optional, Format: Y-m-d):</label>
+				<div class="controls">
+					{{ form.due }}
+					{% for error in form.errors.due %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>
+			-->
+			
+			<div class="control-group{% if form.errors.description %} error{% endif %}">
+				<label class="control-label" for="description">Task Description:</label>
+				<div class="controls">
+					{{form.description(cols = 64, rows = 6, class = "span4")}}
+					{% for error in form.errors.description %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>	
+			
+			<br>
+			<div class="control-group">
+				<div class="controls">
+					<input class="btn btn-primary" type="submit" value="Save Changes">
+				</div>
+			</div>
+			
+		</form>	
+
+	</div>
+	
+</div>
+{% endblock %}
+

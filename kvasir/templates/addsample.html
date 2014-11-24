@@ -1,0 +1,104 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-2 text-left">
+	
+	</div>
+	
+	<div class="col-md-10">
+		<a name="Info"></a> 
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3>Add Sample</h3>
+			</div>
+			<div class="panel-body">
+				<form class="form-horizontal" action="" method="post" name="addsample" enctype="multipart/form-data">
+					{{form.hidden_tag()}}
+					<div class="control-group{% if form.errors.post %} error{% endif %}">
+						<label class="control-label" for="sample_id">Sample ID:</label>
+						<div class="controls">
+							{{ form.sample_id(maxlength = 64, class = "span4") }}
+								{% for error in form.errors.sample_id %}
+								<span class="help-inline">[{{error}}]</span><br>
+								{% endfor %}
+						</div>
+					</div>
+					<div class="control-group{% if form.errors.post %} error{% endif %}">
+						<label class="control-label" for="maternal_id">Maternal ID:</label>
+						<div class="controls">
+							{{ form.maternal_id(maxlength = 64, class = "span4") }}
+								{% for error in form.errors.maternal_id %}
+								<span class="help-inline">[{{error}}]</span><br>
+								{% endfor %}
+						</div>
+					</div>
+					<div class="control-group{% if form.errors.post %} error{% endif %}">
+						<label class="control-label" for="paternal_id">Paternal ID:</label>
+						<div class="controls">
+							{{ form.paternal_id(maxlength = 64, class = "span4") }}
+								{% for error in form.errors.paternal_id %}
+								<span class="help-inline">[{{error}}]</span><br>
+								{% endfor %}
+						</div>
+					</div>
+					<div class="control-group{% if form.errors.post %} error{% endif %}">
+						<label class="control-label" for="status">Status (affected/not affected):</label>
+						<div class="controls">
+							{{ form.status(cols = 64, class = "span4") }}
+							{% for error in form.errors.status %}
+								<span class="help-inline">[{{error}}]</span><br>
+							{% endfor %}
+						</div>
+					</div>
+					<div class="control-group{% if form.errors.post %} error{% endif %}">
+						<label class="control-label" for="ngs">NGS:</label>
+						<div class="controls">
+							{{ form.ngs(cols = 64, class = "span4") }}
+							{% for error in form.errors.ngs %}
+								<span class="help-inline">[{{error}}]</span><br>
+							{% endfor %}
+						</div>
+					</div>
+					<div class="control-group{% if form.errors.post %} error{% endif %}">
+						<label class="control-label" for="genotyping">Genotyping:</label>
+						<div class="controls">
+							{{ form.genotyping(cols = 64, class = "span4") }}
+							{% for error in form.errors.genotyping %}
+								<span class="help-inline">[{{error}}]</span><br>
+							{% endfor %}
+						</div>
+					</div>
+					<div class="control-group{% if form.errors.post %} error{% endif %}">
+						<label class="control-label" for="variants">Variants:</label>
+						<div class="controls">
+							{{ form.variants(cols = 64, class = "span4") }}
+							{% for error in form.errors.variants %}
+								<span class="help-inline">[{{error}}]</span><br>
+							{% endfor %}
+						</div>
+					</div>
+					<div class="control-group{% if form.errors.post %} error{% endif %}">
+						<label class="control-label" for="phenotypes">Phenotypes:</label>
+						<div class="controls">
+							{{ form.phenotypes(cols = 64, class = "span4") }}
+							{% for error in form.errors.phenotypes %}
+								<span class="help-inline">[{{error}}]</span><br>
+							{% endfor %}
+						</div>
+					</div>
+					<div class="control-group">
+						<div class="controls">
+							<input class="btn btn-primary" type="submit" value="Save Changes">
+						</div>
+					</div>
+				</form>	
+			</div>
+		</div>
+
+	</div>
+	
+</div>
+{% endblock %}
+

@@ -1,0 +1,96 @@
+<!-- extend base layout -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-2 text-left">
+	
+	</div>
+	
+	<div class="col-md-10">
+		<p>dbSNP ID: {{marker.dbsnp_id}}</p>
+	
+		<form class="form-horizontal" action="" method="post" name="addsample" enctype="multipart/form-data">
+			{{form.hidden_tag()}}
+
+			<div class="control-group{% if form.errors.ref_allele %} error{% endif %}">
+				<label class="control-label" for="ref_allele">Reference Allele:</label>
+				<div class="controls">
+					{{ form.ref_allele(maxlength = 64, class = "span4") }}
+						{% for error in form.errors.ref_allele %}
+						<span class="help-inline">[{{error}}]</span><br>
+						{% endfor %}
+				</div>
+			</div>
+			<div class="control-group{% if form.errors.alt_allele %} error{% endif %}">
+				<label class="control-label" for="alt_allele">Alternative Allele:</label>
+				<div class="controls">
+					{{ form.alt_allele(maxlength = 64, class = "span4") }}
+						{% for error in form.errors.alt_allele %}
+						<span class="help-inline">[{{error}}]</span><br>
+						{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.source %} error{% endif %}">
+				<label class="control-label" for="source">Source:</label>
+				<div class="controls">
+					{{ form.source(cols = 64, class = "span4") }}
+					{% for error in form.errors.status %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.orientation %} error{% endif %}">
+				<label class="control-label" for="orientation">Orientation:</label>
+				<div class="controls">
+					{{ form.orientation }}
+					{% for error in form.errors.orientation %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.post %} error{% endif %}">
+				<label class="control-label" for="population">Population Frequencies:</label>
+				<div class="controls">		
+					<table class="table table-hover table-condensed table-responsive">
+						<tbody>
+							<tr>
+								<td>1000G European{{form.kg_eur}}</td>
+							</tr>
+							<tr>
+								<td>1000G African{{form.kg_afr}}</td>
+							</tr>
+							<tr>
+								<td>1000G American{{form.kg_amr}}</td>
+							</tr>
+							<tr>
+								<td>1000G Asian{{form.kg_asn}}</td>
+							</tr>
+							<tr>
+								<td>1000G All Populations{{form.kg_all}}</td>
+							</tr>
+						</tbody>
+					</table>
+					{% for error in form.errors.alleles %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<div class="controls">
+					<input class="btn btn-primary" type="submit" value="Save Changes">
+				</div>
+			</div>
+			
+		</form>	
+
+	</div>
+	
+</div>
+{% endblock %}
+

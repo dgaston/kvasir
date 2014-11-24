@@ -1,0 +1,76 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+
+	<div class="col-md-2 text-left">
+	</div>
+	
+	<div class="col-md-10">
+		<div class="row">
+			<div class="panel panel-info">
+				<div class="panel-body">
+					<table class="table table-hover table-condensed table-responsive">
+						<thead>
+							<tr>
+							{% if type == 'gene' %}
+								<th>Ensembl ID</th>
+								<th>HGNC ID(s)</th>
+								<th>CCDS ID(s)</th>
+								<th>Description</th>
+							{% endif %}
+							{% if type == 'marker' %}
+								<th>dbSNP ID</th>
+								<th>Associations (Project)</th>
+								<th>Gene(s)</th>
+							{% endif %}
+							</tr>
+						</thead>
+						<tbody>
+							{% for result in results %}
+								{% if type == 'gene' %}
+									<tr>
+										<td><a href="{{ url_for('gene', id = result.ensembl_id) }}">{{result.ensembl_id}}</a></td>
+										<td>
+											{% for id in result.hgnc_ids %}
+												{{id}}
+											{% endfor %}
+										</td>
+										<td>
+											{% for id in result.ccds_ids %}
+												{{id}}
+											{% endfor %}
+										</td>
+										<td>{{result.description}}</td>
+									</tr>
+								{% endif %}
+								
+								{% if type == 'marker' %}
+									<tr>
+										<td><a href="{{ url_for('marker', id = result.dbsnp_id) }}">{{result.dbsnp_id}}</a></td>
+										<td>
+											{% for association in result.associations %}
+												{{association.trait}} ({{association.project.project_name}})
+											{% endfor %}
+										</td>
+										<td>
+											{% for gene in result.genes %}
+												{% for id in gene.hgnc_ids %}
+													{{id}}&nbsp
+												{% endfor %}
+												(<a href="{{ url_for('gene', id = gene.ensembl_id) }}">{{gene.ensembl_id}}</a>)
+											{% endfor %}
+										<td>
+									</tr>
+								{% endif %}
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+{% endblock %}

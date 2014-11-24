@@ -1,0 +1,133 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<div class="row">
+
+	<div class="col-md-2 text-left">
+		<ul class="list-group" data-spy="affix" data-offset-top="100" data-offset-bottom="200">
+			<a href="#Info" class="list-group-item">Basic Information</a>
+			<a href="#Publications" class="list-group-item">Publications</a>
+			<a href="#Comments" class="list-group-item">Comments</a>
+		</ul>
+	</div>
+	
+	<div class="col-md-10">
+
+		<div class="row">
+			<a name="Info"></a>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-md-10">
+							<h3>Basic Information</h3> 
+						</div>
+					</div>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" action="" method="post" name="addassociation" enctype="multipart/form-data">
+					{{form.hidden_tag()}}
+						<table>
+							<tr>
+								<td>Internal ID</td> 
+								<td>{{association.id}}</td>
+							</tr>
+							
+							<tr>
+								<td>Allele of Interest</td> 
+								<td> {{ form.aoi(cols = 64, class = "span4") }}
+									{% for error in form.errors.aoi %}
+										<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+								</td>
+							</tr>
+							<tr>
+								<td>Trait</td> 
+								<td> {{ form.trait(cols = 64, class = "span4") }}
+									{% for error in form.errors.trait %}
+										<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+								</td>
+							</tr>
+							<tr>
+								<td>Description</td> 
+								<td> {{ form.desc(cols = 64, class = "span4") }}
+									{% for error in form.errors.desc %}
+										<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+								</td>
+							</tr>	
+							<tr>
+								<td>Project</td> 
+								<td> {{ form.project }}
+									{% for error in form.errors.project %}
+										<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+								</td>
+							</tr>	
+							<tr>
+								<td>Last Modified</td> 
+								<td> {{association.last_modified}}
+									{% for error in form.errors.last_modified %}
+										<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+								</td>
+							</tr>
+							<tr>
+								<td>Last Modified By</td> 
+								<td> {{association.last_modified_by.nickname}}
+									{% for error in form.errors.last_modified_by %}
+										<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+								</td>
+							</tr>
+							<tr>
+								<td>Impact</td> 
+								<td> {{ form.impact }}
+									{% for error in form.errors.impact %}
+										<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+								</td>
+							</tr>
+							<tr>
+								<td>Confidence</td> 
+								<td> {{form.confidence}}
+									{% for error in form.errors.confidence %}
+										<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+								</td>
+							</tr>
+							<tr>
+								<td>Active</td> 
+								<td> {{ form.active }}
+									{% for error in form.errors.active %}
+										<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+								</td>
+							</tr>
+							<tr>
+								<td>Reason</td> 
+								<td> {{ form.reason(cols = 64, rows = 4, class = "span4") }}
+									{% for error in form.errors.reason %}
+										<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+								</td>
+							</tr>
+						</table>
+						<br>
+						<div class="control-group">
+							<div class="controls">
+								<input class="btn btn-primary" type="submit" value="Save Changes">
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</div>
+
+
+{% endblock %}

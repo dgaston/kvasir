@@ -1,0 +1,652 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<div class="row">
+
+	<div class="col-md-2 text-left">
+		<ul class="list-group" data-spy="affix" data-offset-top="100" data-offset-bottom="200">
+			<a href="#Info" class="list-group-item">Basic Information</a>
+			<a href="#Summaries" class="list-group-item">Summaries</a>
+			<a href="#Expression" class="list-group-item">Expression</a>
+			<a href="#Phenotypes" class="list-group-item">Phenotypes</a>
+			<a href="#PSGN" class="list-group-item">PSGN Connections</a>
+			<a href="#OMIM" class="list-group-item">OMIM Diseases</a>
+			<a href="#Orphanet" class="list-group-item">Orphanet Diseases</a>
+			<a href="#Pathways" class="list-group-item">Pathways</a>
+			<a href="#GOSlim" class="list-group-item">GO Slim Terms</a>
+			<a href="#Interactions" class="list-group-item">Interactions</a>
+			<a href="#Orthologs" class="list-group-item">Orthologs</a>
+			<a href="#Paralogs" class="list-group-item">Paralogs</a>
+			<a href="#Markers" class="list-group-item">Markers</a>
+			<a href="#Variants" class="list-group-item">Variants</a>
+		</ul>
+	</div>
+	
+	<div class="col-md-10">
+
+		<a name="Info"></a>
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3>Basic Information</h3>
+			</div>
+			<div class="panel-body">
+				  
+				<div class="row">
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h6 class="panel-title">Ensembl Gene ID</h6>
+							</div>
+							<div class="panel-body">
+								{{gene.ensembl_id}}
+							</div>
+						</div>
+					</div>
+			
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h6 class="panel-title">HGNC Symbol(s)</h6>
+							</div>
+							<div class="panel-body">
+								{% for id in gene.hgnc_ids %}
+									{{id}}&nbsp
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+			
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h6 class="panel-title">Synonyms</h6>
+							</div>
+							<div class="panel-body">
+								{% for synonyms in gene.synonyms %}
+									{{synonym}}&nbsp
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+		
+				<div class="row">
+					<div class="col-md-4">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h6 class="panel-title">Gene Description</h6>
+						  </div>
+						  <div class="panel-body">
+							{{gene.description}}
+						  </div>
+						</div>
+					</div>
+			
+					<div class="col-md-4">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h6 class="panel-title">CCDS IDs</h6>
+						  </div>
+						  <div class="panel-body">
+							{% for id in gene.ccds_ids %}
+								{{id}}&nbsp
+							{% endfor %}
+						  </div>
+						</div>
+					</div>
+					
+					<div class="col-md-4">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h6 class="panel-title">UCSC IDs</h6>
+						  </div>
+						  <div class="panel-body">
+							{% for id in gene.ucsc_ids %}
+								{{id}}&nbsp
+							{% endfor %}
+						  </div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-md-4">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h6 class="panel-title">Entrez Gene IDs</h6>
+						  </div>
+						  <div class="panel-body">
+						    {% for id in gene.entrez_ids %}
+								{{id}}&nbsp
+							{% endfor %}
+						  </div>
+						</div>
+					</div>
+					
+					<div class="col-md-4">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h6 class="panel-title">Uniprot IDs</h6>
+						  </div>
+						  <div class="panel-body">
+						    {% for id in gene.uniprot_ids %}
+								{{id}}&nbsp
+							{% endfor %}
+						  </div>
+						</div>
+					</div>
+					
+					<div class="col-md-4">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h6 class="panel-title">Link Outs</h6>
+						  </div>
+						  <div class="panel-body">
+						   		<table class="table table-hover table-condensed table-responsive">
+									<tbody>
+										<tr><td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&singleSearch=knownCanonical&position={{gene.hgnc_ids[0]}}" target="new">UCSC Genome Browser</a></td></tr>
+										<tr><td><a href="http://genome.ucsc.edu/cgi-bin/hgGene?org=human&db=hg19&hgg_gene={{gene.hgnc_ids[0]}}" target="new">UCSC Description</a></td></tr>
+										<tr><td><a href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g={{gene.ensembl_id}}" target="new">Ensembl</a></td></tr>
+										<tr><td><a href="http://www.genecards.org/cgi-bin/carddisp.pl?gene={{gene.hgnc_ids[0]}}" target="new">GeneCards</a></td></tr>
+									</tbody>
+								</table>
+						  </div>
+						</div>
+					</div>
+					
+					
+				</div>
+	
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h6 class="panel-title">Transcripts</h6>
+						  </div>
+						  <div class="panel-body">
+						  	<table class="table table-condensed table-responsive">
+								<thead>
+									<tr>
+										<th>Transcript ID</th>
+										<th>Biotype</th>
+										<th>Protein ID</th>
+									</tr>
+								<thead>
+								<tbody>
+									{% for transcript in gene.transcripts %}
+										<tr>
+											<td>{{transcript.transcript_id}}</td> 
+											<td>{{transcript.biotype}}</td> 
+											<td>{{transcript.protein_id}}</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						  </div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row">
+				
+					<div class="col-md-12">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h6 class="panel-title">User Added Descriptions</h6>
+						  </div>
+						  <div class="panel-body">
+						  
+						  </div>
+						</div>
+					</div>
+					
+				</div>
+		
+				<div class="row">
+				
+					<div class="col-md-6">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h6 class="panel-title">LOF Tolerance</h6>
+						  </div>
+						  <div class="panel-body">
+							{{gene.macarthur_lof_tolerant}}
+						  </div>
+						</div>
+					</div>
+		
+					<div class="col-md-6">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h6 class="panel-title">LOF Score</h6>
+						  </div>
+						  <div class="panel-body">
+							{{gene.macarthur_lof_score}}
+						  </div>
+						</div>
+					</div>
+					
+				</div>
+				
+			</div>
+		</div> <!-- End of Basic Info Wrapper Panel -->
+		
+		<div class="row">
+			<a name="Summaries"></a>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-md-10">
+							<h3>Research Summaries</h3> 
+						</div>
+						<div class="col-md-2">
+							<a href="{{ url_for('add_gene_summary', id = gene.ensembl_id) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus-sign"></span> Add Summary</a>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body">
+				
+					<table class="table table-condensed table-responsive">
+						<thead>
+							<tr>
+								<div>
+									<th>Type</th>
+									<th>Text</th>
+									<th>Last Edited By</th>
+									<th></th>
+								</div>
+							</tr>
+						</thead>
+						<tbody>
+							{% for summary in gene.summaries %}
+								<tr>
+									<td>{{summary.type}}</td>
+									<td>{{summary.text}}</td>
+									<td>{{summary.last_edited_by.nickname}}</td>
+									<td><a href="{{ url_for('editgenesummary', gene = gene.ensembl_id, id = summary.id) }}" class="btn btn-success btn-block"> &nbsp <span class="glyphicon glyphicon-pencil"></span> Edit &nbsp&nbsp</a></td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel-group" id="accordion">
+				
+			<a name="Expression"></a>
+			<div class="panel panel-info" id="expression">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne">
+				  			Expression
+						</div>
+					</h3>
+				</div>
+				<div id="collapseOne" class="panel-collapse collapse in">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+						<thead>
+							<tr>
+								<div>
+									<th>Cell Type</th>
+									<th>Disease State</th>
+									<th>Organism Part</th>
+								</div>
+							</tr>
+						</thead>
+						<tbody>
+							{% for expression in gene.expression %}
+								<tr>
+									<td>{{expression.cell_type}}</td>
+									<td>{{expression.disease_state}}</td>
+									<td>{{expression.organism_part}}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="Phenotypes"></a>
+			<div class="panel panel-info" id="phenotypes">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseTwo">
+				  			Phenotypes
+						</div>
+					</h3>
+				</div>
+				<div id="collapseTwo" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Description</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for phenotype in gene.phenotypes %}
+							<tr>
+								<td>{{phenotype.id}}</td>
+								<td>{{phenotype.term}}</td>
+							</tr>
+						{% endfor %}
+						</body>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="PSGN"></a>
+			<div class="panel panel-info" id="psgn">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseThree">
+				  			PSGN
+						</div>
+					</h3>
+				</div>
+				<div id="collapseThree" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+							<thead>
+								<tr>
+									<th><b>Gene</b></th>
+									<th><b>Similarity</b></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for connection in gene.psgn_connections %}
+									<tr>
+										<td><a href="{{ url_for('gene', id = connection.interactor_ensembl_id) }}">{{connection.interactor_ensembl_id}}</a></td>
+										<td>{{connection.similarity}}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="OMIM"></a>
+			<div class="panel panel-info" id="omim">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseFour">
+				  			OMIM
+						</div>
+					</h3>
+				</div>
+				<div id="collapseFour" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Description</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for disease in gene.omim %}
+									<tr>
+										<td><tr><td><a href="http://www.omim.org/entry/{{disease.omim_id}}" target="new">{{disease.omim_id}}</a></td>
+										<td>{{disease.description}}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="Orphanet"></a>
+			<div class="panel panel-info" id="orphanet">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseFive">
+				  			Orphanet
+						</div>
+					</h3>
+				</div>
+				<div id="collapseFive" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Description</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for disease in gene.orphanet %}
+									<tr>
+										<td>{{disease.orphanet_id}}</td>
+										<td>{{disease.desc}}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="Pathways"></a>
+			<div class="panel panel-info" id="pathways">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseSix">
+				  			Pathways
+						</div>
+					</h3>
+				</div>
+				<div id="collapseSix" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+							<thead>
+								<tr>
+									<th>Pathway</th>
+									<th>Source</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for pathway in gene.pathways %}
+									<tr>
+										<td>{{pathway.pathway}}</td>
+										<td>{{pathway.source}}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="GOSlim"></a>
+			<div class="panel panel-info" id="goslim">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseSeven">
+				  			GO Slim
+						</div>
+					</h3>
+				</div>
+				<div id="collapseSeven" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+							<thead>
+								<tr>
+									<th>Accession</th>
+									<th>Description</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for go in gene.goslim_terms %}
+									<tr>
+										<td>{{go.go_id}}</td>
+										<td>{{go.go_desc}}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="Interactions"></a>
+			<div class="panel panel-info" id="interactions">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseEight">
+				  			Interactions
+						</div>
+					</h3>
+				</div>
+				<div id="collapseEight" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+							<thead>
+								<tr>
+									<th>Interacting Gene Ensembl ID</th>
+									<th>System</th>
+									<th>Type</th>
+									<th>Phenotype</th>
+									<th>Modification</th>
+									<th>Source</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for interaction in gene.interactions %}
+									<tr>
+										<td><a href="{{ url_for('gene', id = interaction.interactor_ensembl_id) }}">{{interaction.interactor_ensembl_id}}</a></td>
+										<td>{{interaction.system}}</td>
+										<td>{{interaction.type}}</td>
+										<td>{{interaction.phenotype}}</td>
+										<td>{{interaction.modifications}}</td>
+										<td>{{interaction.source}}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="Orthologs"></a>
+			<div class="panel panel-info" id="orthologs">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseNine">
+				  			Orthologs
+						</div>
+					</h3>
+				</div>
+				<div id="collapseNine" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+							<thead>
+								<tr>
+									<th>Ortholog ID</th>
+									<th>Organism</th>
+									<th>Ortholog Type</th>
+									<th>Percent ID to Query Sequence</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for ortholog in gene.orthologs %}
+									<tr>
+										<td>{{ortholog.ortho_id}}</td>
+										<td>{{ortholog.species_common}}</td>
+										<td>{{ortholog.homology_type}}</td>
+										<td>{{ortholog.percent_id}}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="Paralogs"></a>
+			<div class="panel panel-info" id="paralogs">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseTen">
+				  			Paralogs
+						</div>
+					</h3>
+				</div>
+				<div id="collapseTen" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+							<thead>
+								<tr>
+									<th>Paralog ID</th>
+									<th>Paralog Type</th>
+									<th>Percent ID</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for paralog in gene.paralogs %}
+									<div>
+										<tr>
+											<td>{{paralog.gene2}}</td>
+											<td>{{paralog.homology_type}}</td>
+											<td>{{paralog.percent_id}}</td>
+										</tr>
+									</div>
+								{% endfor %}
+							</tbody>		
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="Markers"></a>
+			<div class="panel panel-info" id="markers">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseEleven">
+				  			Markers
+						</div>
+					</h3>
+				</div>
+				<div id="collapseEleven" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+					
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<a name="Variants"></a>
+			<div class="panel panel-info" id="variants">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseTwelve">
+				  			Variants
+						</div>
+					</h3>
+				</div>
+				<div id="collapseTwelve" class="panel-collapse collapse">
+					<div class="panel-body">
+						<table class="table table-condensed table-responsive">
+					
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</div> <!--End of Accordion Panel Group -->
+	
+	</div> <!-- End of Right Hand Section of Website -->
+	
+</div> <!-- Wrapper Row for Setting Website into Two Columns -->
+
+{% endblock %}

@@ -1,0 +1,111 @@
+<!-- extend base layout -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-2 text-left">
+	
+	</div>
+	
+	<div class="col-md-10">
+		<p>dbSNP ID: {{marker.dbsnp_id}}</p>
+	
+		<form class="form-horizontal" action="" method="post" name="addassociation" enctype="multipart/form-data">
+			{{form.hidden_tag()}}
+
+			<div class="control-group{% if form.errors.aoi %} error{% endif %}">
+				<label class="control-label" for="aoi">Allele of Interest:</label>
+				<div class="controls">
+					{{ form.aoi(maxlength = 64, class = "span4") }}
+						{% for error in form.errors.aoi %}
+						<span class="help-inline">[{{error}}]</span><br>
+						{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.fg %} error{% endif %}">
+				<label class="control-label" for="aoi">Favoured Genotype:</label>
+				<div class="controls">
+					{{ form.fg(maxlength = 64, class = "span4") }}
+						{% for error in form.errors.fg %}
+						<span class="help-inline">[{{error}}]</span><br>
+						{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.trait %} error{% endif %}">
+				<label class="control-label" for="trait">Trait:</label>
+				<div class="controls">
+					{{ form.trait(maxlength = 64, class = "span4") }}
+						{% for error in form.errors.trait %}
+						<span class="help-inline">[{{error}}]</span><br>
+						{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.desc %} error{% endif %}">
+				<label class="control-label" for="desc">Description:</label>
+				<div class="controls">
+					{{ form.desc(cols = 64, rows = 4, class = "span4") }}
+					{% for error in form.errors.desc %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.project %} error{% endif %}">
+				<label class="control-label" for="project">Project:</label>
+				<div class="controls">
+					{{ form.project }}
+					{% for error in form.errors.project %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.active %} error{% endif %}">
+				<label class="control-label" for="active">Active:</label>
+				<div class="controls">
+					{{ form.active }}
+					{% for error in form.errors.active %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.impact %} error{% endif %}">
+				<label class="control-label" for="impact">Impact:</label>
+				<div class="controls">
+					{{ form.impact }}
+					{% for error in form.errors.impact %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<div class="control-group{% if form.errors.confidence %} error{% endif %}">
+				<label class="control-label" for="confidence">Confidence:</label>
+				<div class="controls">
+					{{ form.confidence }}
+					{% for error in form.errors.confidence %}
+						<span class="help-inline">[{{error}}]</span><br>
+					{% endfor %}
+				</div>
+			</div>
+			
+			
+			
+			<div class="control-group">
+				<div class="controls">
+					<input class="btn btn-primary" type="submit" value="Save Changes">
+				</div>
+			</div>
+			
+		</form>	
+
+	</div>
+	
+</div>
+{% endblock %}
+

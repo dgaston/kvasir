@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+{% include 'flash.html' %}
+<div class="container-fluid">
+<div class="jumbotron">
+  <h1>Welcome to kvasir {{g.user.nickname}}!</h1>
+  <p>This is the Kvasir app landing page for IGNITE. Please sign-in or register. Authorized users can access
+  pages for individual projects, modify profile settings, and search for information on genes of interest using the navigation
+  bar.</p>
+</div>
+</div>
+{% endblock %}

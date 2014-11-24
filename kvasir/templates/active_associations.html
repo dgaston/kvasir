@@ -1,0 +1,58 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<div class="row">
+	<div class="col-md-2 text-left"> </div>
+	<div class="col-md-10">
+		<div class="row">
+			<div class="col-md-12">
+				<table id="results" class="display table table-hover table-condensed table-responsive" cellspacing="0">
+					<thead>
+						<tr>
+							<th><center><b>dbSNP ID</b></center></th>
+							<th><center><b></b>Gene(s)</center></th>
+							<th><center><b>Trait</b></center></th>
+							<th><center><b>Favoured Allele</b></center></th>
+							<th><center><b>Impact</b></center></th>
+							<th><center><b>Confidence</b></center></th>
+							<th><center><b>Active</b></center></th>
+							<th><center><b>Last Modified</b></center></th>
+							<th><center><b>Last Modified By</b></center></th>
+							<th><center><b></b></center></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for marker in project.markers %}
+							{% for association in marker.associations %}
+								{% if association.active %}
+									<tr>
+										<td><a href="{{ url_for('marker', id = marker.dbsnp_id) }}">{{marker.dbsnp_id}}</a></td>
+										<td>
+											{% for gene in marker.genes %}
+												{% for id in gene.hgnc_ids %}
+													{{id}}&nbsp
+												{% endfor %}
+												(<a href="{{ url_for('gene', id = gene.ensembl_id) }}">{{gene.ensembl_id}}</a>)
+											{% endfor %}
+										</td>
+										<td>{{association.trait}}</td>
+										<td>{{association.allele_of_interest}}</td>
+										<td>{{association.impact}}</td>
+										<td>{{association.confidence}}</td>
+										<td>{{association.active}}</td>
+										<td>{{association.last_modified}}</td>
+										<td><{{association.last_modified_by}}/td>
+										<td><a href="{{ url_for('association', id = association.id, marker = marker.dbsnp_id) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-edit"></span> Details</a></td>
+									</tr>
+								{% endif %}
+							{% endfor %}
+						{% endfor %}
+					</tbody>
+				</table>
+		</div>	
+		</div>
+	</div>
+</div>
+{% endblock %}

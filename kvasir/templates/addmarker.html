@@ -1,0 +1,66 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-2 text-left">
+	
+	</div>
+	
+	<div class="col-md-10">
+		<a name="Info"></a> 
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3>Add Marker</h3>
+			</div>
+			<div class="panel-body">
+			
+				<form class="form-horizontal" action="" method="post" name="addmarker" enctype="multipart/form-data">
+					<div class="row">
+						{{form.hidden_tag()}}
+						<div class="control-group{% if form.errors.post %} error{% endif %}">
+							<label class="control-label" for="dbsnp_id">dbSNP ID:</label>
+							<div class="controls">
+								{{ form.dbsnp_id(cols = 64, class = "span4") }}
+									{% for error in form.errors.sample_id %}
+									<span class="help-inline">[{{error}}]</span><br>
+									{% endfor %}
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						
+						<div class="AlleleTemplate">
+							<div class="controls controls-row">
+								<input class="span3" placeholder="First Name" type="text" name="firstname2">
+								<input class="span3" placeholder="Last Name" type="text" name="lastname2">
+								<select class="span2" name="gender2">
+									<option value="Male">Male</option>
+									<option value="Female">Female</option>
+								</select>
+							</div>
+						</div>
+						
+						<div id="container"></div>
+					
+					</div>
+					
+					<div class="row">
+						<br>
+						<div class="control-group">
+							<div class="controls">
+								<input class="btn btn-primary" type="submit" value="Save Changes">
+							</div>
+						</div>
+					</div>
+					
+				</form>	
+				
+			</div>
+		</div>
+
+	</div>
+	
+</div>
+{% endblock %}
+

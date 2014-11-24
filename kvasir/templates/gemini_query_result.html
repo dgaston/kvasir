@@ -1,0 +1,95 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+
+<!-- Begin HTML -->
+
+<script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+
+<!-- Working JQuery DataTables Code  -->
+<script>
+$(document).ready(function() {
+	var table = $('#results').dataTable( {
+        "sAjaxSource": '{{results_file}}',
+        "deferRender": true,
+        "scrollX": true,
+        "sDom": 'Rlfrtip',
+        "columns": [
+            {% for column in js_header %}
+				{ "data": "{{column}}" },
+			{% endfor %}
+        ]
+    } );
+     
+} );
+</script>
+
+
+<div class="col-md-12">
+	<div class="row">
+		<div class="panel-group" id="accordion">
+		
+			<div class="col-md-12">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne">
+								Query Details
+							</div>
+						</h3>
+					</div>
+					<div id="collapseOne" class="panel-collapse collapse">
+						<div class="panel-body">
+							<p>Database File: {{file}}</p>
+							<p>Query: {{query}}</p>
+							<p>Genotype Filter: {{genotype_filter}}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	<br>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<table id="results" class="display table table-hover table-condensed table-responsive" cellspacing="0">
+				<thead>
+					<tr>
+						{% for column in header %}
+							<th>{{column}}</th>
+						{% endfor %}
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+				<tfoot>
+					<tr>
+						{% for column in header %}
+							<th>{{column}}</th>
+						{% endfor %}
+					</tr>
+				</tfoot>
+			</table>
+		</div>	
+	</div>
+	
+	<div class="row">
+		<div class="col-md-4">
+			<a href="{{ url_for('export', file_name = results_string) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-download"></span> Download Results</a>
+		</div>
+		<div class="col-md-4">
+			<!--<a href="{{ url_for('analytics', file_name = results_string) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-dashboard"></span> Advanced Analytics</a>-->
+		</div>
+		<div class="col-md-4">
+			&nbsp
+		</div>
+	</div>
+	
+</div>
+{% endblock %}

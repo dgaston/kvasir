@@ -1,0 +1,12 @@
+<p>Dear {{user.nickname}},</p>
+
+<p>Job_id {{analysis.id}} ({{analysis.experiment}})from project {{analysis.project_id}} has now 
+completed.</p>
+
+<p>Click on the following link to visit the report page for job_id {{analysis.id}}:</p>
+
+<p><a href="{{url_for("analysis", id = analysis.id, _external = True)}}">{{analysis.experiment}}</a><br />
+
+<p>Regards,</p>
+
+<p>The <code>GenomicsManager</code> admin</p>

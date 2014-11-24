@@ -1,0 +1,46 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<div class="col-md-12">
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<h3>Panels</h3>
+		</div>
+		<div class="panel-body">
+		
+			<table class="table table-condensed table-responsive">
+				<thead>
+					<tr>
+						<div>
+							<th>Name</th>
+							<th>Description</th>
+							<th>Genes</th>
+						</div>
+					</tr>
+				</thead>
+				<tbody>
+					{% for panel in panels %}
+						<tr>
+							<td>{{panel.name}}</td>
+							<td>{{panel.description}}</td>
+							<td>
+								{% for gene in panel.genes %}
+									{% for id in gene.hgnc_ids %}
+										{{id}}&nbsp
+									{% endfor %}
+									(<a href="{{ url_for('gene', id = gene.ensembl_id) }}">{{gene.ensembl_id}}</a>)
+								{% endfor %}
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}

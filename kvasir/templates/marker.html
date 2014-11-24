@@ -1,0 +1,182 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<div class="row">
+
+	<div class="col-md-2 text-left">
+		<!--
+		<a href="{{ url_for('edit_marker', marker = marker.dbsnp_id) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-cog"></span>   Edit Marker</a><br>
+		-->
+		<ul class="list-group" data-spy="affix" data-offset-top="100" data-offset-bottom="200">
+			<a href="#Info" class="list-group-item">Basic Information</a>
+			<a href="#Alleles" class="list-group-item">Alleles</a>
+			<a href="#Associations" class="list-group-item">Associations</a>
+			<a href="#Summaries" class="list-group-item">Summaries</a>
+		</ul>
+	</div>
+	
+	<div class="col-md-10">
+
+		<div class="row">
+			<a name="Info"></a>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3>Basic Information</h3>
+				</div>
+				<div class="panel-body">
+					<p>ID: {{marker.dbsnp_id}}</p>
+					<p>Strand: {{marker.strand}}</p>
+					<p>Type: {{marker.type}}</p>		
+				</div>
+		</div>
+		
+		<div class="row">
+			<a name="Alleles"></a>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-md-10">
+							<h3>Alleles</h3> 
+						</div>
+						<div class="col-md-2">
+							<a href="{{ url_for('addallele', marker = marker.dbsnp_id) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus-sign"></span>  Add Allele Data</a>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body">
+					<table class="table table-condensed table-responsive">
+					<thead>
+						<tr>
+							<div>
+								<th>Ref Allele</th>
+								<th>Alt Allele</th>
+								<th>Source</th>
+								<th>Orientation</th>
+								<th>Frequencies</th>
+								<th>Details</th>
+							</div>
+						</tr>
+					</thead>
+					<tbody>
+						{% for allele in marker.alleles %}
+							<tr>
+								<td>{{allele.ref_allele}}</td>
+								<td>{{allele.alt_allele}}</td>
+								<td>{{allele.source}}</td>
+								<td>{{allele.orientation}}</td>
+								<td>
+									{% for frequency in allele.frequencies %}
+										<p><b>{{frequency.population}}</b>:{{frequency.frequency}}</p>
+									{% endfor %}
+								</td>
+								<td>
+									<a href="{{ url_for('allele', id = allele.id, marker = marker.dbsnp_id) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-edit"></span> View</a>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<a name="Associations"></a>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-md-10">
+							<h3>Associations</h3> 
+						</div>
+						<div class="col-md-2">
+							<a href="{{ url_for('addassociation', marker = marker.dbsnp_id) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus-sign"></span> Add Association</a>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body">
+					<table class="table table-condensed table-responsive">
+					<thead>
+						<tr>
+							<th>Allele of Interest</th>
+							<th>Trait</th>
+							<th>Impact</th>
+							<th>Confidence</th>
+							<th>Description</th>
+							<th>Project</th>
+							<th>Active</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for association in marker.associations %}
+						<tr>
+							<td>{{association.allele_of_interest}}</td>
+							<td>{{association.trait}}</td>
+							<td>{{association.impact}}</td>
+							<td>{{association.confidence}}</td>
+							<td>{{association.description}}</td>
+							<td>{{association.project.project_name}}</td>
+							<td>{{association.active}}</td>
+							<td>
+								<td>
+									<a href="{{ url_for('association', id = association.id, marker = marker.dbsnp_id) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-edit"></span> View</a>
+								</td>
+							</td>
+						</tr>
+					{% endfor %}
+					</body>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<a name="Summaries"></a>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-md-10">
+							<h3>Summaries</h3> 
+						</div>
+						<div class="col-md-2">
+							<a href="{{ url_for('genotypesummary', marker = marker.dbsnp_id) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus-sign"></span> Add Summary</a>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body">
+					<table class="table table-condensed table-responsive">
+					<thead>
+						<tr>
+							<th>Genotype</th>
+							<th>Text</th>
+							<th>Date Last Modified</th>
+							<th>Modified By</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for summary in marker.genotype_summaries %}
+						<tr>
+							<td>{{summary.genotype}}</td>
+							<td>{{summary.text}}</td>
+							<td>{{summary.last_modified}}</td>
+							<td>{{summary.last_edited_by}}</td>
+							<td>
+								<td>
+									<a href="{{ url_for('genotypesummary', id = summary.id, marker = marker.dbsnp_id) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+								</td>
+							</td>
+						</tr>
+					{% endfor %}
+					</body>
+					</table>
+				</div>
+			</div>
+		</div>
+	
+	</div>
+</div>
+
+
+{% endblock %}

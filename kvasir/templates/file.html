@@ -1,0 +1,82 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+
+<div class="row">
+	<div class="col-md-2 text-left">
+		<ul class="list-group" data-spy="affix" data-offset-top="100" data-offset-bottom="200">
+			<a href="#Info" class="list-group-item">Info</a>
+			<a href="#Notes" class="list-group-item">Notes</a>
+		</ul>
+	</div>
+	
+	<div class="col-md-10">
+		
+		<a name="Info"></a> 
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3>Info</h3>
+			</div>
+			<div class="panel-body">
+				<table class="padded-table">
+					<tr>
+						<td><b>File Name:</b></td>
+						<td>{{file.location}}</td>
+					</tr>
+					<tr>
+						<td><b>Uploaded by user ID:</b></td>
+						<td>{{file.user_id}}</td>
+					</tr>
+					<tr>
+						<td><a href="{{ url_for('download', project = project.slug, id = file.id) }}" class="btn btn-success">Download</a></td>
+					</tr>
+				</table>	
+    		</div>
+		</div>
+		
+		<a name="Notes"></a> 
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3>Notes</h3>
+			</div>
+			<div class="panel-body">
+				{% if g.user.is_user_or_admin %}
+				 <form action="" method="post" name="note">
+					{{form.hidden_tag()}}
+					<table>
+						<tr>
+							<td>Post a New Note:</td>
+						</tr>
+						<tr>
+							<td>{{ form.file_note(size = 50) }}</td>
+							<td>
+							{% for error in form.errors.file_note %} 
+								<span style="color: red;">[{{error}}]</span><br>
+							{% endfor %}
+							</td>
+						</tr>
+						<tr>
+							<td><input type="submit" value="Post"></td>
+						</tr>
+					</table>
+				</form>
+				{% endif %}
+				<br>
+
+				{% for note in notes %}
+				<blockquote>
+					<address>
+						<strong>{{note.user.nickname}}</strong><br>
+						<em>{{note.posted}}</em><br>
+					</address>
+					<p>{{note.body}}</p><br>
+				</blockquote>
+				{% endfor %}
+			</div>
+		</div>
+		
+	</div>
+</div>
+{% endblock %}
