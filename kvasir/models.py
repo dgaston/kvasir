@@ -92,96 +92,6 @@ class VariantAnnotationSet(db.DynamicEmbeddedDocument):
     annotation_source = db.StringField(required=True)
     annotator = db.StringField(required=True)
     
-class Marker(GenericVariant):
-    dbsnp_id = db.StringField(max_length=30, required=True, unique=True)
-    
-    alleles = db.ListField(db.EmbeddedDocumentField('Allele'))
-    associations = db.ListField(db.EmbeddedDocumentField('Association'))
-    historical_associations = db.ListField(db.EmbeddedDocumentField('HistoricalAssociation'))
-    genotype_summaries = db.ListField(db.EmbeddedDocumentField('GenotypeSummary'))
-    publications = db.ListField(db.ReferenceField('RelatedStudy'))
-    
-    meta = {
-        'indexes': ['dbsnp_id']
-    }
-
-class GenotypeSummary(db.EmbeddedDocument):
-    id = db.StringField()
-    text = db.StringField()
-    last_edited_by = db.ReferenceField('User')
-    last_modified = db.DateTimeField(default=datetime.datetime.now)
-    genotype = db.StringField(required=True)
-
-class Allele(db.EmbeddedDocument):
-    id = db.StringField(primary_key=True, required=True, unique=True)
-    ref_allele = db.StringField(required=True)
-    alt_allele = db.StringField(required=True)
-    source = db.StringField(max_length=255, required=True)
-    orientation = db.StringField(max_length=10)
-    
-    frequencies = db.ListField(db.EmbeddedDocumentField('Frequency'))
-
-class Frequency(db.EmbeddedDocument):
-    population = db.StringField(max_length=10, required=True)
-    frequency = db.FloatField(min_value=0.00, max_value=1.00)
-
-class Association(db.EmbeddedDocument):
-    id = db.StringField(primary_key=True, required=True, unique=True)
-    allele_of_interest = db.StringField(required=True)
-    favoured_genotype = db.StringField()
-    trait = db.StringField(max_length=50, required=True)
-    last_modified = db.DateTimeField(default=datetime.datetime.now)
-
-    description = db.StringField()
-    active = db.BooleanField()
-    in_haplotype = db.BooleanField()
-
-    haplotype_markers = db.ListField(db.ReferenceField('Marker'))
-    haplotype_associations = db.ListField(db.StringField())
-
-    impact = db.FloatField()
-    confidence = db.FloatField()
-
-    allele_source = db.ReferenceField('Allele')
-    project = db.ReferenceField('Project')
-    last_modified_by = db.ReferenceField('User')
-
-    summaries = db.ListField(db.EmbeddedDocumentField('AssociationSummary'))
-    publications = db.ListField(db.ReferenceField('RelatedStudy'))
-    comments = db.ListField(db.EmbeddedDocumentField('AssociationComment'))
-    previous_versions = db.ListField(db.ReferenceField('HistoricalAssociation'))
-
-class AssociationSummary(db.EmbeddedDocument):
-    id = db.StringField()
-    text = db.StringField()
-    last_edited_by = db.ReferenceField('User')
-    last_modified = db.DateTimeField(default=datetime.datetime.now)
-    type = db.StringField()
-    title = db.StringField()
-
-class HistoricalAssociation(db.EmbeddedDocument):
-    id = db.StringField()
-    allele_of_interest = db.StringField(required=True)
-    trait = db.StringField(max_length=50, required=True)
-    allele_source = db.ReferenceField('Allele')
-    summaries = db.ListField(db.StringField())
-    
-    project = db.ReferenceField('Project')
-    active = db.BooleanField()
-    
-    impact = db.FloatField()
-    confidence = db.FloatField()
-    
-    comments = db.ListField(db.EmbeddedDocumentField('AssociationComment'))
-    
-    removed_by = db.ReferenceField('User', required=True)
-    removed_on = db.DateTimeField(default=datetime.datetime.now, required=True)
-    reason = db.StringField(required=True)
-
-class AssociationComment(db.EmbeddedDocument):
-    created_at = db.DateTimeField(default=datetime.datetime.now)
-    author = db.StringField(verbose_name="Name", max_length=255, required=True)
-    body = db.StringField(required=True)
 
 class Publication(db.Document):
     title = db.StringField(required=True)
@@ -191,41 +101,7 @@ class Publication(db.Document):
     doi = db.StringField()
     pdf = db.FileField()
 
-class RelatedStudy(db.Document):
-    title = db.StringField(required=True)
-    abstract = db.StringField(required=True)
 
-    pubmed_id = db.StringField()
-    doi = db.StringField()
-    ages = db.StringField()
-    genders = db.StringField()
-
-    pdf = db.FileField()
-
-    num_participants = db.StringField()
-    num_cases = db.IntField()
-    num_controls = db.IntField()
-    trait = db.StringField()
-    p_value = db.FloatField()
-    odds_ratio = db.FloatField()
-
-    summaries = db.ListField(db.EmbeddedDocumentField('StudySummary'))
-
-    age_participants_lower = db.IntField()
-    age_participants_upper = db.IntField()
-
-    gender_participants = db.ListField(db.StringField())
-    athlete_types = db.ListField(db.StringField())
-    ethnicities = db.ListField(db.StringField())
-
-
-class StudySummary(db.EmbeddedDocument):
-    type = db.StringField()
-    text = db.StringField()
-    submitted_by = db.ReferenceField('User')
-    submitted_on = db.DateTimeField()
-
-    
 class Project(db.Document):
     project_name = db.StringField(max_length=100, required=True, unique=True)
     slug = db.StringField(max_length=255, required=True, unique=True)
@@ -333,7 +209,6 @@ class Gene(db.Document):
     phenotypes = db.ListField(db.EmbeddedDocumentField('Phenotype'))
     
     paralogs = db.ListField(db.ReferenceField('Gene'))
-    markers = db.ListField(db.ReferenceField('Marker'))
     variants = db.ListField(db.ReferenceField('Variant'))
     pathways = db.ListField(db.ReferenceField('Pathway'))
     
@@ -449,6 +324,7 @@ class FileNote(db.EmbeddedDocument):
     
     user = db.ReferenceField('User', required=True)
 
+
 class GenericGenomicRegion(db.Document):
     genome = db.StringField(required=True)
     chromosome = db.StringField(required=True)
@@ -460,9 +336,21 @@ class GenericGenomicRegion(db.Document):
         'indexes': ['chromosome', 'start', 'end']
         }
 
+
 class CoverageStatRegion(GenericGenomicRegion):
     sample_coverage = db.ListField(db.EmbeddedDocumentField('SampleCoverage'))
+    low_cov_samples = db.ListField(db.ReferenceField('Sample'))
+    cov_gap_samples = db.ListField(db.ReferenceField('Sample'))
+    no_read_samples = db.ListField(db.ReferenceField('Sample'))
+    poor_qual_samples = db.ListField(db.ReferenceField('Sample'))
+
 
 class SampleCoverage(db.EmbeddedDocument):
     sample = db.ReferenceField('Sample')
     coverage = db.StringField()
+
+
+class Resource(db.Document):
+    resource_type = db.StringField()
+    location = db.StringField()
+    desc = db.StringField()
