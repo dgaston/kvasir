@@ -52,6 +52,11 @@ def build_gemini_query_web(form):
     if form.gene_filter.data != 'none':
         where_clause = set_GEMINI_Genes_Filter(form.gene_filter.data, form.filter_method.data, BASE_GEMINI_QUERY_WHERE_CLAUSE)
 
+    if form.intervals.data:
+        where_clause = set_GEMINI_intervals_filter(where_clause, form.intervals.data)
+
+    where_clause += " ORDER BY chrom, start"
+
     query = "%s, %s %s WHERE %s AND %s" % (base_query, DEFAULT_GEMINI_GENOTYPE_COLUMNS, table, where_clause, impact)
 
     if allele_freqs_filter:
@@ -83,6 +88,22 @@ def set_GEMINI_Genes_Filter(name, method, where):
     string = "%s AND (%s)" % (where, gene_ids_string)
 
     return string
+
+def set_GEMINI_intervals_filter(where, interval_list):
+    intervals = interval_list.splitlines()
+    for interval in intervals:
+        temp = interval.split(':')
+        chrom = temp[0]
+        coords = temp[1].split('-')
+        start = coords[0]
+        end = coords[1]
+
+        where += " AND chrom = " + "'" + chrom + "'" + \
+            " AND ((start BETWEEN " + start + " AND " + end + ")" +\
+            " OR (end BETWEEN " + start + " AND " + end + "))"
+
+    return where
+
 
 def set_GEMINI_QUERY_BASE(type):
     if type == 'all':
@@ -220,18 +241,6 @@ def set_GEMINI_Impact_Filter(filter):
         pass
     
     return impact_filter
-
-def add_region(chrom, start, end, where_clause):
-    """modify a gemini query when given a region"""
-
-    where_clause += " AND chrom = " + "'" + chrom + "'" + \
-        " AND ((start BETWEEN " + start + " AND " + end + ")" +\
-        " OR (end BETWEEN " + start + " AND " + end + "))"
-
-
-    where_clause += " ORDER BY chrom, start"
-
-    return where_clause
 
 def _setupGEMINIQuery(sample_list, query_base, where_clause):
     sys.stdout.write("Retrieving info on provided samples\n")

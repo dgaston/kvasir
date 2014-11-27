@@ -4,8 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSRF_ENABLED = True
 
-#Change this value on deployment
-SECRET_KEY = u'Gh\x00)\xad\x7fQx\xedvx\xfetS-\x9a\xd7\x17$\x08_5\x17F'
+SECRET_KEY = u'Gh\x00)\xad\x7fQx\xedvx\xfetS-\x9a\xd7\x17$\x08_5\x17F' #Change this value on deployment!!!!!
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha512'
 SECURITY_PASSWORD_SALT = SECRET_KEY
 
@@ -44,6 +43,7 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'pdf', 'xls
 MAX_SEARCH_RESULTS = 500
 
 # General Settings for Application
+# Are these actually needed anymore with flask-security running?
 ROLE_GUEST = 0
 ROLE_USER = 1
 ROLE_ADMIN = 2
