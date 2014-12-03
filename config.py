@@ -4,7 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSRF_ENABLED = True
 
-SECRET_KEY = u'Gh\x00)\xad\x7fQx\xedvx\xfetS-\x9a\xd7\x17$\x08_5\x17F' #Change this value on deployment!!!!!
+SECRET_KEY = u'' #Change this value on deployment!!!!!
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha512'
 SECURITY_PASSWORD_SALT = SECRET_KEY
 
