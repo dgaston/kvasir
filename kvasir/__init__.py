@@ -31,9 +31,13 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config["MONGODB_SETTINGS"] = {'DB': "kvasir"}
 
 #Configure Celery Object
+#You may want to configure individual settings here, particularly for larger compute environments
 app.config.update(
     CELERY_BROKER_URL='redis://localhost:6379',
-    CELERY_RESULT_BACKEND='redis://localhost:6379'
+    CELERY_RESULT_BACKEND='redis://localhost:6379',
+    CELERY_MAX_CACHED_RESULTS=100,
+    CELERY_TRACK_STARTED=True,
+    BROKER_TRANSPORT_OPTIONS = {'fanout_prefix': True}
 )
 
 celery = make_celery(app)

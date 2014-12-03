@@ -19,7 +19,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 def print_excel_report(query, database, header, gq, filename):
     wb = Workbook()
-    
+
     #Print Cover material
     ws = wb.new_sheet("Cover")
     ws.set_cell_value(1, 1, "Date Generated:")
@@ -28,16 +28,16 @@ def print_excel_report(query, database, header, gq, filename):
     ws.set_cell_value(2, 2, query)
     ws.set_cell_value(3, 1, "GEMINI Database:")
     ws.set_cell_value(3, 2, database)
-    
+
     ws2 = wb.new_sheet("Variants", data=header)
     row = 2
     for row in gq:
         cell = 1
-        
+
         row = row + 1
-    
+
     wb.save(filename)
-    
+
 
 def build_gemini_query_web(form):
     base_query = set_GEMINI_QUERY_BASE(form.query.data)
@@ -55,13 +55,14 @@ def build_gemini_query_web(form):
     if form.intervals.data:
         where_clause = set_GEMINI_intervals_filter(where_clause, form.intervals.data)
 
-    where_clause += " ORDER BY chrom, start"
+    #order_by = "ORDER BY v.chrom, v.start"
 
     query = "%s, %s %s WHERE %s AND %s" % (base_query, DEFAULT_GEMINI_GENOTYPE_COLUMNS, table, where_clause, impact)
+    sys.stderr.write("QUERY: %s\n" % query)
 
     if allele_freqs_filter:
         query = "%s AND %s" % (query, allele_freqs_filter)
-    
+
     return (query, genotypes_filter)
 
 def set_GEMINI_Genes_Filter(name, method, where):
@@ -91,6 +92,9 @@ def set_GEMINI_Genes_Filter(name, method, where):
 
 def set_GEMINI_intervals_filter(where, interval_list):
     intervals = interval_list.splitlines()
+    num_intervals = len(intervals)
+
+    where += " AND ("
     for interval in intervals:
         temp = interval.split(':')
         chrom = temp[0]
@@ -98,9 +102,16 @@ def set_GEMINI_intervals_filter(where, interval_list):
         start = coords[0]
         end = coords[1]
 
-        where += " AND chrom = " + "'" + chrom + "'" + \
-            " AND ((start BETWEEN " + start + " AND " + end + ")" +\
-            " OR (end BETWEEN " + start + " AND " + end + "))"
+        where += "(v.chrom = " + "'" + chrom + "'" + \
+            " AND ((v.start BETWEEN " + start + " AND " + end + ")" +\
+            " OR (v.end BETWEEN " + start + " AND " + end + ")))"
+
+        num_intervals = num_intervals - 1
+
+        if num_intervals > 0:
+            where += " OR "
+        else:
+            where += ")"
 
     return where
 
@@ -114,7 +125,7 @@ def set_GEMINI_QUERY_BASE(type):
         base = VARIANT_GEMINI_QUERY_BASE
     else:
         base = DEFAULT_GEMINI_QUERY_BASE
-    
+
     return base
 
 def set_GEMINI_QUERY_TABLE(type):
@@ -126,11 +137,11 @@ def set_GEMINI_QUERY_TABLE(type):
         base = VARIANT_GEMINI_TABLE_QUERY
     else:
         base = DEFAULT_GEMINI_TABLE_QUERY
-    
+
     return base
 
 def set_GEMINI_Genotypes_Filter(affected, unaffected, unknown, affected_number, unaffected_number, unknown_number, mode):
-    
+
     genotype_filters = []
 
     if affected == 'variant':
@@ -173,7 +184,7 @@ def set_GEMINI_Genotypes_Filter(affected, unaffected, unknown, affected_number, 
         genotype_filters.append("(gt_types).(phenotype==1).(!=HOM_ALT).(%s)" % unaffected_number)
     else:
         pass
-    
+
     if unknown == 'variant':
         genotype_filters.append("(gt_types).(phenotype==-9).(!=HOM_REF).(%s)" % unknown_number)
     elif unknown == 'het':
@@ -192,45 +203,45 @@ def set_GEMINI_Genotypes_Filter(affected, unaffected, unknown, affected_number, 
         genotype_filters.append("(gt_types).(phenotype==-9).(!=HOM_ALT).(%s)" % unknown_number)
     else:
         pass
-    
+
     genotypes_filter_string = " AND ".join(genotype_filters)
-    
+
     return genotypes_filter_string
 
 def set_GEMINI_AF_Filter(evs_eur, evs_afr, evs_all, kg_eur, kg_afr, kg_amr, kg_asn, kg_all):
     af_filters = []
-    
+
     if evs_eur != -1:
         af_filters.append("(aaf_esp_ea <= %s OR aaf_esp_ea is NULL)" % evs_eur)
-    
+
     if evs_afr != -1:
         af_filters.append("(aaf_esp_aa <= %s OR aaf_esp_aa is NULL)" % evs_afr)
-    
+
     if evs_all != -1:
         af_filters.append("(aaf_esp_all <= %s OR aaf_esp_all is NULL)" % evs_all)
-    
+
     if kg_eur != -1:
         af_filters.append("(aaf_1kg_eur <= %s OR aaf_1kg_eur is NULL)" % kg_eur)
-    
+
     if kg_afr != -1:
         af_filters.append("(aaf_1kg_afr <= %s OR aaf_1kg_afr is NULL)" % kg_afr)
-    
+
     if kg_amr != -1:
         af_filters.append("(aaf_1kg_amr <= %s OR aaf_1kg_amr is NULL)" % kg_amr)
-    
+
     if kg_asn != -1:
         af_filters.append("(aaf_1kg_asn <= %s OR aaf_1kg_asn is NULL)" % kg_asn)
-    
+
     if kg_all != -1:
         af_filters.append("(aaf_1kg_all <= %s OR aaf_1kg_all is NULL)" % kg_all)
-    
+
     af_filter_string = " AND ".join(af_filters)
-    
+
     return af_filter_string
 
 def set_GEMINI_Impact_Filter(filter):
     impact_filter = ""
-    
+
     if filter == 'all':
         impact_filter = """((impact_severity == 'MED') or (impact_severity == 'HIGH') or (impact_severity == 'LOW'))"""
     elif filter == 'med+high':
@@ -239,7 +250,7 @@ def set_GEMINI_Impact_Filter(filter):
         impact_filter = """impact_severity == 'HIGH'"""
     else:
         pass
-    
+
     return impact_filter
 
 def _setupGEMINIQuery(sample_list, query_base, where_clause):
@@ -249,12 +260,12 @@ def _setupGEMINIQuery(sample_list, query_base, where_clause):
     for sample in samples:
         id = "gts.%s" % sample
         sample_genotype_ids.append(id)
-   
+
     genotype_query_string = ",".join(sample_genotype_ids)
     query = "%s, %s %s %s" % (query_base, genotype_query_string, DEFAULT_GEMINI_TABLE_QUERY, where_clause)
-    
+
     sys.stdout.write("Working with samples: %s\n" % genotype_query_string)
-    
+
     return (query, samples)
 
 
@@ -280,42 +291,16 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
     #We only re-executed the query to get the header object.
     count1 = 0
     if not os.path.isfile(json_results_fh):
-        genes_filter = []
-        if mode == 'compound':
-            gene_variants = Counter()
-            for row in gq:
-                count1 += 1
-                gene_variants[row['ensembl_gene_id']] += 1
-            for gene in gene_variants:
-                if gene_variants[gene] >= 2:
-                    genes_filter.append(gene)
-
-        gq = GeminiQuery(gdb.file, out_format=JSONRowFormat(None))
-        gq.run(query, genotype_filter)
         with open(json_results_fh, "wb") as file:
             count = 0
-            total = 0
             file.write("""{\n"data": [\n""")
             for row in gq:
-                total += 1
-                flag = 0
-                if mode == 'none':
-                    flag = 1
-                elif mode == 'compound':
-                    if row['ensembl_gene_id'] in genes_filter:
-                        flag = 1
+                if count == 0:
+                    file.write("%s" % row)
                 else:
-                    flag = 1
-
-                if flag:
-                    if count == 0:
-                        file.write("%s" % row)
-                    else:
-                        file.write(",\n%s" % row)
-                    count += 1
+                    file.write(",\n%s" % row)
+                count += 1
             file.write("""\n]\n}\n""")
-            #Debugging, creates bad formatted JSON
-            #file.write("Output %s of %s results and count1 of %s\n" % (count, total, count1))
 
     return (header, js_header, results_file, gdb.file, query, genotype_filter, results_string)
 
