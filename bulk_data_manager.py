@@ -845,6 +845,10 @@ def delete_all_pathways():
     results = models.Pathway.objects()
     for result in results:
         result.delete()
+    genes = models.Gene.objects()
+    for gene in genes:
+        gene.pathways = []
+        gene.save()
 
 @db_manager.command
 def delete_all_phenotypes():
