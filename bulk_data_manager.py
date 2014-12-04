@@ -220,7 +220,7 @@ def populate_pathways(file):
             p.save()
             ids = row['ensembl_ids'].split(',')
             for id in ids:
-                g = models.Gene.objects.get(gene_id=id)
+                g = models.Gene.objects.get(ensembl_id=id)
 
                 g.pathways.append(p)
                 g.save()
