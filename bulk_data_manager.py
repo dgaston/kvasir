@@ -216,9 +216,16 @@ def populate_pathways(file):
     with open(file, 'rU') as csvfile:
         reader = csv.DictReader(csvfile, delimiter='\t')
         for row in reader:
+            p = models.Pathway(name=row['pathway'].decode('utf-8'), source=row['source'], external_id=row['external_id'])
+            p.save()
             ids = row['ensembl_ids'].split(',')
             for id in ids:
-                p = models.Pathway(gene_id=id, pathway=row['pathway'].decode('utf-8'), source=row['source'])
+                g = models.Gene(gene_id=id)
+
+                g.pathways.append(g)
+                g.save()
+
+                p.members.append(g)
                 p.save()
 
 @db_manager.option('-f', '--file', dest='file', help='HPO Genes to Phenotypes File')
