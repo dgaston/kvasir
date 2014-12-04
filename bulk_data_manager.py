@@ -222,7 +222,7 @@ def populate_pathways(file):
             for id in ids:
                 g = models.Gene(gene_id=id)
 
-                g.pathways.append(g)
+                g.pathways.append(p)
                 g.save()
 
                 p.members.append(g)
