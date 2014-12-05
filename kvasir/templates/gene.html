@@ -452,13 +452,15 @@
 								<tr>
 									<th>Pathway</th>
 									<th>Source</th>
+									<th>External ID</th>
 								</tr>
 							</thead>
 							<tbody>
 								{% for pathway in gene.pathways %}
 									<tr>
-										<td>{{pathway.pathway}}</td>
+										<td>{{pathway.name}}</td>
 										<td>{{pathway.source}}</td>
+										<td>{{pathway.external_id}}</td>
 									</tr>
 								{% endfor %}
 							</tbody>
