@@ -704,7 +704,7 @@ def populate_gene_list_from_panther(name, desc, file):
 @db_manager.option('-d', '--desc', dest='desc', help='Description of gene list')
 @db_manager.option('-f', '--file', dest='file', help='File of genes')
 def populate_gene_list(name, desc, file):
-    "Populate a Gene List based on genes from a PANTHER format file"
+    "Populate a Gene List based on genes from a list of ensembl IDs format file"
 
     list = models.GeneList(name=name, description=desc)
     list.save()

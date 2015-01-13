@@ -16,11 +16,16 @@ Kvasir is released under the MIT license.
 
 Installation:
 
-It is suggested you install all python requirements inside an isolated python environment using conda or virtualenv 
+It is suggested you install all python requirements inside an isolated python environment using conda or virtualenv.
+In addition you may need the following system packages instaleld:
+    1. python-dev (on Ubuntu). This is required for hashlib and several other packages
+    2. Mongodb
 
-1. install mongodb
-2. install PyVCF
-3. pip install -r requirements.txt 
+
+1. pip install --allow-external python-graph-core --allow-unverified python-graph-core python-graph-core
+2. pip install --allow-external python-graph-dot --allow-unverified python-graph-dot python-graph-dot
+3. install PyVCF
+4. pip install -r requirements.txt
 
 
 Make sure to modify your config.py file to set up a random string for the SECRET_KEY variable for hashing and salting of passwords in the user management module. If possible you should also configure the mail settings to allow the application to send out emails in case of problems (this feature is not yet fully developed).
@@ -34,3 +39,8 @@ You can ignore most of this tutorial other if you already have an isolated pytho
 
 To start the application run the start_celery and start_uwsgi scripts.
 
+#Creating the database
+
+The database is currently set up from a mix of downloaded files from various sources. Each datatype can be loaded into MongoDB
+using functions provided in the database scripts. For ease of use I have also created database "dumps" of the core tables which
+can be imported into a fresh database using mongorestore.

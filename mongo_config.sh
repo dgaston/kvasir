@@ -8,7 +8,7 @@ elif [[ "$MONGO_PORT_27017_TCP_ADDR" != "" ]]; then
  	echo "[Mongo] Using a linked Mongo container"
  	export MONGO_URL="mongodb://$MONGO_PORT_27017_TCP_ADDR/ocb"
 else
- 	#otherwise start an local mongo server
+ 	#otherwise start a local mongo server
  	echo "[Mongo] Using local mongodb server(not recommended)"
  	mongod &
  	sleep 5
