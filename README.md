@@ -17,6 +17,7 @@ Kvasir is released under the MIT license.
 Installation:
 
 It is suggested you install all python requirements inside an isolated python environment using conda or virtualenv.
+<<<<<<< HEAD
 In addition you may need the following system packages installed:
 
 1. python-dev (on Ubuntu). This is required for hashlib and several other packages
@@ -28,12 +29,23 @@ In addition you may need the following system packages installed:
 7. Redis:
 
 Make sure MongoDB and Redis are running
+=======
+In addition you may need the following system packages instaleld:
+    1. python-dev (on Ubuntu). This is required for hashlib and several other packages
+    2. Mongodb
+    3. lapack/blas (liblapack-dev and libblas-dev on ubuntu)
+    4. fortran compiler (gfortran)
+    5. zlib.h (zlib1g-dev)
+    6. tcl8.5
+    7. Redis: 
+>>>>>>> FETCH_HEAD
 
 
 1. pip install --allow-external python-graph-core --allow-unverified python-graph-core python-graph-core
 2. pip install --allow-external python-graph-dot --allow-unverified python-graph-dot python-graph-dot
 3. install PyVCF
-4. pip install -r requirements.txt
+4. pip install -U cython
+5. pip install -r requirements.txt
 
 
 Make sure to modify your config.py file to set up a random string for the SECRET_KEY variable for hashing and salting of passwords in the user management module. If possible you should also configure the mail settings to allow the application to send out emails in case of problems (this feature is not yet fully developed).
