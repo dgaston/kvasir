@@ -17,9 +17,17 @@ Kvasir is released under the MIT license.
 Installation:
 
 It is suggested you install all python requirements inside an isolated python environment using conda or virtualenv.
-In addition you may need the following system packages instaleld:
-    1. python-dev (on Ubuntu). This is required for hashlib and several other packages
-    2. Mongodb
+In addition you may need the following system packages installed:
+
+1. python-dev (on Ubuntu). This is required for hashlib and several other packages
+2. Mongodb
+3. lapack/blas (liblapack-dev and libblas-dev on ubuntu)
+4. fortran compiler (gfortran)
+5. zlib.h (zlib1g-dev)
+6. tcl8.5
+7. Redis:
+
+Make sure MongoDB and Redis are running
 
 
 1. pip install --allow-external python-graph-core --allow-unverified python-graph-core python-graph-core

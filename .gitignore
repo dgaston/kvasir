@@ -1,7 +1,7 @@
 *.db
 flask/
 *.pyc
-tmp/
+tmp/*
 db_repository/
 Data/
 .DS_Store
