@@ -141,7 +141,11 @@ def loading(task_id):
 @login_required
 def view_result(task_id):
     result = AsyncResult(task_id)
-    (header, js_header, results_file, gdb_file, query, genotype_filter, results_string) = result.get()
+
+    try:
+        (header, js_header, results_file, gdb_file, query, genotype_filter, results_string) = result.get()
+    except:
+        print result.traceback
 
     session['header'] = header
     session['js_header'] = js_header
