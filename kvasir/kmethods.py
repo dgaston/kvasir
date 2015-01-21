@@ -276,10 +276,14 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
     json_results_fh = os.path.join(STATIC_FOLDER, json_filename)
     results_file = "/static/%s" % json_filename
 
+    sys.stderr.write("DEBUG: Retrieving GEMINI db object\n")
     gdb = models.GDatabase.objects.get(id = ObjectId(id))
+    sys.stderr.write("DEBUG: Setup Query Object\n")
     gq = GeminiQuery(gdb.file, out_format=JSONRowFormat(None))
+    sys.stderr.write("DEBUG: Run GEMINi Query\n")
     gq.run(query, genotype_filter)
 
+    sys.stderr.write("DEBUG: Getting header\n")
     header = gq.header
     js_header = []
     for key in header:
@@ -290,7 +294,9 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
     #If the json results file already exists we save some time by skipping generating the file.
     #We only re-executed the query to get the header object.
     count1 = 0
+    sys.stderr.write("DEBUG: Checking if file exists\n")
     if not os.path.isfile(json_results_fh):
+        sys.stderr.write("DEBUG: Opening results file\n")
         with open(json_results_fh, "wb") as file:
             count = 0
             file.write("""{\n"data": [\n""")
