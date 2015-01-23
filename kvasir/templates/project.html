@@ -11,13 +11,8 @@
 			<a href="#Info" class="list-group-item">Info</a>
 			<a href="#Files" class="list-group-item">Files</a>
 			<a href="#Notes" class="list-group-item">Notes</a>
-			{% if project.type == 'Marker' %}
-				<a href="#Markers" class="list-group-item">Markers</a>
-			{% endif %}
-			{% if project.type != 'Marker' %}
-				<a href="#GDB" class="list-group-item">GEMINI Databases</a>
-				<a href="#Samples" class="list-group-item">Samples</a>
-			{% endif %}
+			<a href="#GDB" class="list-group-item">GEMINI Databases</a>
+			<a href="#Samples" class="list-group-item">Samples</a>
 			<a href="#Analyses" class="list-group-item">Analyses</a>
 		</ul>
 	</div>
@@ -126,134 +121,73 @@
 				</div>
 			</div>	
 		</div>
-		
-		{% if project.type == 'Marker' %}
-			<div class="row">
-				<div class="row">
-					<div class="col-md-3">
-						<a href="{{ url_for('active_associations', project=project.project_name) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-th-list"></span>  View All Active Associations</a>
-					</div>
-				</div>
-				<div class="col-md-12">
-					<a name="Markers"></a>
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<div class="row">
-								<div class="col-md-10">
-									<h3>Markers</h3> 
-								</div>
-								<div class="col-md-2">
-									<a href="{{ url_for('addmarker', name=project.project_name) }}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus-sign"></span>  Add Marker</a>
-								</div>
-							</div>
-						</div>
-						<div class="panel-body">
-							<table class="table table-condensed table-responsive">
-								<thead>
-									<tr>
-										<th>dbSNP ID</th>
-										<th>Associations</th>
-										<th>Gene(s)</th>
-									</tr>
-								</thead>
-								<tbody>
-									{% for marker in project.markers %}
-										
-										<tr>
-											<td><a href="{{ url_for('marker', id = marker.dbsnp_id) }}">{{marker.dbsnp_id}}</a></td>
-											<td>
-												{% for association in marker.associations %}
-													{{association.trait}}&nbsp
-												{% endfor %}
-											</td>
-											<td>
-												{% for gene in marker.genes %}
-													{% for id in gene.hgnc_ids %}
-														{{id}}&nbsp
-													{% endfor %}
-													(<a href="{{ url_for('gene', id = gene.ensembl_id) }}">{{gene.ensembl_id}}</a>)
-												{% endfor %}
-											<td>
-										</tr>
-										
-									{% endfor %}
-								</tbody>
-							</table>
-						</div>
-					</div> 
-				</div>
-			</div>
-		
-		{% endif %}
-		
-		{% if project.type != 'Marker' %}
-			<div class="row">
-				<div class="col-md-12">
-			
-					<a name="GDB"></a> 
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<h3>GEMINI Databases</h3>
-						</div>
-						<div class="panel-body">
-							<table class="table table-condensed table-responsive">
-								<thead>
-									<tr>
-										<th><b><center>File Location</center></b></th>
-										<th><b><center>Name</center></b></th>
-									</tr>
-								</thead>
-								<tbody>
-									{% for database in project.gemini_databases %}
-										<tr>
-											<td width="10%"><center>{{database.file}}</center></td>
-											<td><a href="{{ url_for('gemini_query', project = project.slug, id = database.id) }}" class="btn btn-info btn-block">{{database.short_name}}</a></td>
-										</tr>
-									{% endfor %}
-								</tbody>
-							</table>
-							<br>
-						</div>
-				</div>
-			</div>
-		
-			<div class="row">
-				<div class="col-md-12">
-		
-					<a name="Samples"></a> 
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<h3>Samples</h3>
-						</div>
-						<div class="panel-body">
-							<a href="{{ url_for('addsample', id = project.id) }}" class="btn btn-success btn-block">Add Sample</a><br><br>
-							<table class="table table-hover table-condensed table-responsive">
-								<thead>
-								<tr>
-									<th><b><center>Sample ID</center></b></th>
-									<th><b><center>Status</center></b></th>
-									<th><b><center>NGS Status</center></b></th>
-									<th><b><center>Genotyping</center></b></th>
-									<th><b><center>Variants Discovered</center></b></th>
-								</tr>
-								</thead>
-								<tbody>
-								{% for sample in project.samples %}
-								<tr>
-									<td>{{sample.sample_id_string}}</td>
-									<td>{{sample.status}}</td>
-									<td>{{sample.ngs_sequencing}}</td>
-									<td>{{sample.genotype_data}}</td>
-									<td>{{sample.variants_discovered}}</td>
-								</tr>
-							{% endfor %}
-							</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-			</div>
-		{% endif %}
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <a name="GDB"></a>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3>GEMINI Databases</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-condensed table-responsive">
+                            <thead>
+                                <tr>
+                                    <th><b><center>File Location</center></b></th>
+                                    <th><b><center>Name</center></b></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for database in project.gemini_databases %}
+                                    <tr>
+                                        <td width="10%"><center>{{database.file}}</center></td>
+                                        <td><a href="{{ url_for('gemini_query', project = project.slug, id = database.id) }}" class="btn btn-info btn-block">{{database.short_name}}</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <br>
+                    </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <a name="Samples"></a>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3>Samples</h3>
+                    </div>
+                    <div class="panel-body">
+                        <a href="{{ url_for('addsample', id = project.id) }}" class="btn btn-success btn-block">Add Sample</a><br><br>
+                        <table class="table table-hover table-condensed table-responsive">
+                            <thead>
+                            <tr>
+                                <th><b><center>Sample ID</center></b></th>
+                                <th><b><center>Status</center></b></th>
+                                <th><b><center>NGS Status</center></b></th>
+                                <th><b><center>Genotyping</center></b></th>
+                                <th><b><center>Variants Discovered</center></b></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for sample in project.samples %}
+                            <tr>
+                                <td>{{sample.sample_id_string}}</td>
+                                <td>{{sample.status}}</td>
+                                <td>{{sample.ngs_sequencing}}</td>
+                                <td>{{sample.genotype_data}}</td>
+                                <td>{{sample.variants_discovered}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 		
 		<div class="row">
 			<a name="Tasks"></a> 

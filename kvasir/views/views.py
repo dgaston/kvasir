@@ -47,6 +47,7 @@ def allowed_file(filename):
 
 @app.route('/project/<slug>',  methods = ['GET', 'POST'])
 @login_required
+@roles_accepted('User', 'Admin')
 def project(slug):
     project = models.Project.objects.get(slug=slug)
     users = models.User.objects
@@ -70,7 +71,7 @@ def project(slug):
 
 @app.route('/upload/<name>', methods = ['GET', 'POST'])
 @login_required
-@roles_accepted('User')
+@roles_accepted('User', 'Admin')
 def upload(name):
     form = FileForm()
     if request.method == 'POST':
@@ -101,7 +102,7 @@ def upload(name):
 
 @app.route('/download/<project>/<id>/', methods=['GET', 'POST'])
 @login_required
-@roles_accepted('User')
+@roles_accepted('User', 'Admin')
 def download(project, id):
     p = models.Project.objects.get(slug=project)
     
@@ -122,6 +123,7 @@ def download(project, id):
 
 @app.route('/file/<project>/<id>', methods = ['GET', 'POST'])
 @login_required
+@roles_accepted('User', 'Admin')
 def file(project, id):
     p = models.Project.objects.get(slug=project)
     

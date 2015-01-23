@@ -13,6 +13,7 @@ from flask import make_response
 from flask import session
 
 from flask.ext.login import login_required
+from flask.ext.security import roles_accepted
 
 from kvasir import app, models
 from kvasir.forms import *
@@ -27,6 +28,7 @@ from gemini import GeminiQuery
 
 @app.route('/gemini_query/<project>/<id>', methods = ['GET', 'POST'])
 @login_required
+@roles_accepted('User', 'Admin')
 def gemini_query(project, id):
     
     gdb = models.GDatabase.objects.get(id = ObjectId(id))
@@ -68,6 +70,7 @@ def gemini_query(project, id):
 
 @app.route('/export/<file_name>')
 @login_required
+@roles_accepted('User', 'Admin')
 def export(file_name):
     try:
         #header = session.pop('header')
@@ -105,6 +108,7 @@ def export(file_name):
 
 @app.route('/analytics/<file_name>')
 @login_required
+@roles_accepted('User', 'Admin')
 def analytics(file_name):
     header = ""
     try:
@@ -133,12 +137,14 @@ def analytics(file_name):
 
 @app.route('/loading/<task_id>')
 @login_required
+@roles_accepted('User', 'Admin')
 def loading(task_id):
     return render_template('loading.html', task_id=task_id)
 
 
 @app.route('/view_result/<task_id>')
 @login_required
+@roles_accepted('User', 'Admin')
 def view_result(task_id):
     result = AsyncResult(task_id)
 
@@ -157,6 +163,7 @@ def view_result(task_id):
 
 @app.route('/poll_state', methods = ['GET', 'POST'])
 @login_required
+@roles_accepted('User', 'Admin')
 def poll_state():
     """ A view to report the progress to the user """
     data = 'Fail'

@@ -1,5 +1,6 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, login_required
+from flask.ext.security import roles_accepted
 
 from kvasir import app, lm
 from kvasir.forms import *
@@ -57,6 +58,7 @@ def logout():
 
 @app.route('/user/<email>')
 @login_required
+@roles_accepted('User', 'Admin')
 def user(email):
     user = User.objects.get(email=email)
     if user == None:
@@ -67,6 +69,7 @@ def user(email):
 
 @app.route('/edit', methods = ['GET', 'POST'])
 @login_required
+@roles_accepted('User', 'Admin')
 def edit():
     form = EditForm(g.user.nickname)
     if form.validate_on_submit():
