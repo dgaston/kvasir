@@ -294,6 +294,7 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
     #If the json results file already exists we save some time by skipping generating the file.
     #We only re-executed the query to get the header object.
     count1 = 0
+    rows = []
     sys.stderr.write("DEBUG: Checking if file exists\n")
     if not os.path.isfile(json_results_fh):
         sys.stderr.write("DEBUG: Opening results file\n")
@@ -301,6 +302,7 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
             count = 0
             file.write("""{\n"data": [\n""")
             for row in gq:
+                rows.append(row)
                 if count == 0:
                     file.write("%s" % row)
                 else:
