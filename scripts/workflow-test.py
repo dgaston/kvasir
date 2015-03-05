@@ -5,7 +5,7 @@ import sys, argparse
 import subprocess as sub
 import pipeline as pipe
 
-from config import parseProjectConfig
+from WorkflowConfig import parseProjectConfig
 from multiprocessing import Pool
 
 
