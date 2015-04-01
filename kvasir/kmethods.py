@@ -211,7 +211,7 @@ def set_GEMINI_Genotypes_Filter(affected, unaffected, unknown, affected_number, 
 
     return genotypes_filter_string
 
-def set_GEMINI_AF_Filter(evs_eur, evs_afr, evs_all, kg_eur, kg_afr, kg_amr, kg_asn, kg_all):
+def set_GEMINI_AF_Filter(evs_eur, evs_afr, evs_all, kg_eur, kg_afr, kg_amr, kg_asn, kg_all, exac_eur, exac_fin, exac_afr, exac_amr, exac_eas, exac_sas, exac_all, exac_oth):
     af_filters = []
 
     if evs_eur != -1:
@@ -244,7 +244,7 @@ def set_GEMINI_AF_Filter(evs_eur, evs_afr, evs_all, kg_eur, kg_afr, kg_amr, kg_a
     if exac_eur != -1:
         af_filters.append("(aaf_adj_exac_nfe <= %s OR aaf_adj_exac_nfe is NULL)" % kg_all)
 
-    if exac_afr_ != -1:
+    if exac_afr != -1:
         af_filters.append("(aaf_adj_exac_afr <= %s OR aaf_adj_exac_afr is NULL)" % kg_all)
 
     if exac_amr != -1:
