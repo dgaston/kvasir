@@ -120,7 +120,6 @@ class Project(db.Document):
         return url_for('project', kwargs={"slug": self.slug})
     
     tasks = db.ListField(db.ReferenceField('Task'))
-    markers = db.ListField(db.ReferenceField('Marker'))
     files = db.ListField(db.ReferenceField('File'))
     samples = db.ListField(db.ReferenceField('Sample'))
     gemini_databases = db.ListField(db.ReferenceField('GDatabase'))
