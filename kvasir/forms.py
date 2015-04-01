@@ -114,6 +114,15 @@ class GQueryForm(Form):
     kg_asn = DecimalField(label='1kg_asn', default=-1, places=None, rounding=None)
     kg_all = DecimalField(label='1kg_all', default=-1, places=None, rounding=None)
 
+    exac_eur = DecimalField(label='exac_eur', default=-1, places=None, rounding=None)
+    exac_fin = DecimalField(label='exac_fin', default=-1, places=None, rounding=None)
+    exac_afr = DecimalField(label='exac_afr', default=-1, places=None, rounding=None)
+    exac_amr = DecimalField(label='exac_amr', default=-1, places=None, rounding=None)
+    exac_eas = DecimalField(label='exac_eas', default=-1, places=None, rounding=None)
+    exac_sas = DecimalField(label='exac_sas', default=-1, places=None, rounding=None)
+    exac_all = DecimalField(label='exac_all', default=-1, places=None, rounding=None)
+    exac_oth = DecimalField(label='exac_oth', default=-1, places=None, rounding=None)
+
 class EditForm(Form):
     nickname = TextField('nickname', validators = [DataRequired()])
     about_me = TextAreaField('about_me', validators = [Length(min = 0, max = 140)])

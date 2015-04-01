@@ -18,18 +18,21 @@ def run_bwa(configuration):
 
     # Run BWA in multi-threaded mode on each sample specified
     for sample in configuration['samples']:
-        sys.stdout.write("Running BWA for sample %s\n" % sample['name'])
-        output = "%s.sorted" % sample['name']
-        logfile = "%s.bwa.log" % sample['name']
-        command = ("""bwa mem -t %s -R "@RG\tID:%s\tSM:%s\tPL:illumina" -M -v 2 %s %s %s | """
-                   """samtools view -b -S -u - | samtools sort -@ %s - %s""" \
-                   % (configuration['num_cores'], sample['rg_id'], sample['rg_sm'], configuration['reference_genome'],
-                      sample['fastq1'], sample['fastq2'], configuration['num_cores'], output))
+        if sample['bam']:
+            sys.stdout.write("Sample %s already aligned. Skipping...\n" % sample['name'])
+        else:
+            sys.stdout.write("Running BWA for sample %s\n" % sample['name'])
+            output = "%s.sorted" % sample['name']
+            logfile = "%s.bwa.log" % sample['name']
+            command = ("""bwa mem -t %s -R "@RG\tID:%s\tSM:%s\tPL:illumina" -M -v 2 %s %s %s | """
+                       """samtools view -b -S -u - | samtools sort -@ %s - %s""" \
+                       % (configuration['num_cores'], sample['rg_id'], sample['rg_sm'], configuration['reference_genome'],
+                          sample['fastq1'], sample['fastq2'], configuration['num_cores'], output))
 
-        code = pipe.runAndLogCommand(command, logfile)
-        pipe.checkReturnCode(code)
+            code = pipe.runAndLogCommand(command, logfile)
+            pipe.checkReturnCode(code)
 
-        sys.stdout.write("Finished BWA for sample: %s\n" % sample['name'])
+            sys.stdout.write("Finished BWA for sample: %s\n" % sample['name'])
 
     sys.stdout.write("Finished BWA\n")
 
@@ -110,7 +113,7 @@ def run_RealignIndels(configuration):
     pool.close()
     pool.join()
 
-    pipe.checkReturnCodes
+    pipe.checkReturnCodes(codes)
 
     sys.stdout.write("Finished Realigning Targets\n")
 
@@ -122,24 +125,43 @@ def run_Recalibrator(configuration):
 
     instructions1 = []
     instructions2 = []
+    instructions3 = []
+    instructions4 = []
 
     for sample in configuration['samples']:
         sys.stdout.write("Generating commands for multiprocessing steps %s\n" % sample['name'])
 
         logfile1 = "%s.baserecalibrator.log" % sample['name']
-        logfile2 = "%s.printreads.log" % sample['name']
+        logfile2 = "%s.baserecalibrator_second_pass.log" % sample['name']
+        logfile3 = "%s.printreads.log" % sample['name']
+        logfile4 = "%s.printplots.log" % sample['name']
 
         realigned = "%s.realigned.sorted.bam" % sample['name']
         recal_config = "%s.recal" % sample['name']
+        post_recal= "%s.post.recal" % sample['name']
+        plots = "%s.recalibration_plots.pdf" % sample['name']
         output = "%s.recalibrated.sorted.bam" % sample['name']
 
+        #Calculate covariates
         command1 = ("java -Xmx4g -jar %s -T BaseRecalibrator -I %s -o %s -R %s --knownSites %s"
                     % (configuration['gatk_bin'], realigned, recal_config, configuration['reference_genome'], configuration['dbsnp']))
-        command2 = ("java -Xmx4g -jar %s -T PrintReads -I %s -o %s -R %s -BQSR %s"
+
+        #Second pass after bqsr
+        command2 = ("java -Xmx4g -jar %s -T BaseRecalibrator -I %s -o %s -R %s --knownSites %s -BQSR %s"
+                    % (configuration['gatk_bin'], realigned, post_recal, configuration['reference_genome'], configuration['dbsnp'], recal_config))
+
+        #Print recalibrated BAM
+        command3 = ("java -Xmx4g -jar %s -T PrintReads -I %s -o %s -R %s -BQSR %s"
                     % (configuration['gatk_bin'], realigned, output, configuration['reference_genome'], recal_config))
+
+        #Analysis of Covariates and Plot Printing
+        command4 = ("java -Xmx4g -jar %s -T AnalyzeCovariates -before %s -after %s -plots %s"
+                    % (configuration['gatk_bin'],recal_config, post_recal, plots))
 
         instructions1.append((command1, logfile1))
         instructions2.append((command2, logfile2))
+        instructions3.append((command3, logfile3))
+        instructions4.append((command4, logfile4))
 
     sys.stdout.write("Running multiprocessing of BaseRecalibrator\n")
     pool = Pool(processes=int(configuration['num_cores']))
@@ -150,12 +172,30 @@ def run_Recalibrator(configuration):
 
     pipe.checkReturnCodes(codes)
 
-    sys.stdout.write("Running multiprocessing of PrintReads\n")
+    sys.stdout.write("Running multiprocessing of Post Calibration BaseRecalibrator\n")
     pool2 = Pool(processes=int(configuration['num_cores']))
-    result2 = pool2.map_async(pipe.runMulti, instructions2)
+    result2 = pool.map_async(pipe.runMulti, instructions2)
     codes = result2.get()
     pool2.close()
     pool2.join()
+
+    pipe.checkReturnCodes(codes)
+
+    sys.stdout.write("Running multiprocessing of PrintReads\n")
+    pool3 = Pool(processes=int(configuration['num_cores']))
+    result3 = pool3.map_async(pipe.runMulti, instructions3)
+    codes = result3.get()
+    pool3.close()
+    pool3.join()
+
+    pipe.checkReturnCodes(codes)
+
+    sys.stdout.write("Running Analysis and Plotting of Covariates\n")
+    pool4 = Pool(processes=int(configuration['num_cores']))
+    result4 = pool4.map_async(pipe.runMulti, instructions4)
+    codes = result4.get()
+    pool4.close()
+    pool4.join()
 
     pipe.checkReturnCodes(codes)
 
@@ -186,6 +226,43 @@ def run_UnifiedGenotyper(configuration):
     pipe.checkReturnCode(code)
 
     sys.stdout.write("Finished UnifiedGenotyper\n")
+
+def run_HaplotypeCaller(configuration):
+    "Call and Genotype variants using the HaplotypeCaller"
+
+    instructions = []
+    gvcfs = []
+
+    for sample in configuration['samples']:
+        sample = "%s.recalibrated.sorted.bam" % sample['name']
+        output = "%s.raw.hc.snps.indels.g.vcf" % sample['name']
+        logfile = "%s.hc.log" % sample['name']
+
+        command = ("java -Xmx4G -jar %s -T HaplotypeCaller -R %s -I %s -o %s --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 --dbsnp %s"
+                % (configuration['gatk_bin'], configuration['reference_genome'], sample_bam, output, configuration['dbsnp']))
+
+        instructions.append((command, logfile))
+        gvcfs.append(output)
+
+    sys.stdout.write("Running HaplotypeCaller for samples in project %s\n" % configuration['project_name'])
+
+    result = pool.map_async(pipe.runMulti, instructions)
+    codes = result.get()
+    pool.close()
+    pool.join()
+
+    pipe.checkReturnCodes(codes)
+
+    sys.stdout.write("Finished Running HaplotypeCaller\n")
+    sys.stdout.write("Running Joint Genotyping on Cohort\n")
+
+    command = ("java -Xmx4G -jar %s -T HaplotypeCaller -R %s"
+               % (configuration['gatk_bin'], configuration['reference_genome']))
+
+    code = pipe.runAndLogCommand(command, logfile)
+    pipe.checkReturnCode(code)
+
+    sys.stdout.write("Finished Joint Genotyping Cohort\n")
 
 
 def run_AnnotationAndFilters(configuration):
@@ -225,15 +302,23 @@ def run_AnnotationAndFilters(configuration):
     sys.stdout.write("Finished annotating and filtering variants using the GATK\n")
 
 
+def run_Normalization(configuration):
+    filtered_vcf = "%s.filtered.vcf" % configuration['project_name']
+    normalized_vcf = "%s.normalized.vcf" % configuration['project_name']
+    logfile = "%s.vt_norm.log" % configuration['project_name']
+
+    command = ("zless %s | sed 's/ID=AD.Number=./ID=AD,Number=R/' | vt decompose -s - | vt normalize -r %s - > %s" %
+               (filtered_vcf, configuration['reference_genome'], normalized_vcf))
+
 def run_SNPEff(configuration):
     '''Run snpEff Annotations'''
 
-    filtered_vcf = "%s.filtered.vcf" % configuration['project_name']
+    normalized_vcf = "%s.normalized.vcf" % configuration['project_name']
     snpEff_vcf = "%s.snpEff.%s.vcf" % (configuration['project_name'], configuration['snpeff_reference'])
     logfile = "%s.snpeff.log" % configuration['project_name']
 
-    command = ("java -Xmx4G -jar %s -v %s %s > %s" %
-               (configuration['snpeff_bin'], configuration['snpeff_reference'], filtered_vcf, snpEff_vcf))
+    command = ("java -Xmx4G -jar %s -classic -formatEff -v %s %s > %s" %
+               (configuration['snpeff_bin'], configuration['snpeff_reference'], normalized_vcf, snpEff_vcf))
 
     sys.stdout.write("Running snpEff\n")
     code = pipe.runAndLogCommand(command, logfile)
@@ -249,8 +334,8 @@ def run_GEMINI(configuration):
     gemini_db = "%s.snpEff.%s.db" % (configuration['project_name'], configuration['snpeff_reference'])
     logfile = "%s.gemini.log" % configuration['project_name']
 
-    command = ("gemini load --cores %s -v %s -t snpEff %s" %
-               (configuration['num_cores'], snpEff_vcf, gemini_db))
+    command = ("%s load --cores %s -v %s -t snpEff %s" %
+               (configuration['gemini_docker'], configuration['num_cores'], snpEff_vcf, gemini_db))
 
     sys.stdout.write("Running GEMINI\n")
     code = pipe.runAndLogCommand(command, logfile)
@@ -294,10 +379,14 @@ if __name__ == "__main__":
         args.stage = args.stage + 1
 
     if args.stage == 7:
-        run_SNPEff(configuration)
+        run_Normalization(configuration)
         args.stage = args.stage + 1
 
     if args.stage == 8:
+        run_SNPEff(configuration)
+        args.stage = args.stage + 1
+
+    if args.stage == 9:
         run_GEMINI(configuration)
         args.stage = args.stage + 1
 

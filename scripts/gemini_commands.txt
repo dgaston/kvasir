@@ -1,0 +1,1 @@
+docker run -t -v /data/shared/gemini/data:/root/gemini/data -v $(pwd):/root/working -i dgaston/gemini:latest load --cores [num cores] -v [vcf file] [database name]

@@ -46,7 +46,10 @@ def build_gemini_query_web(form):
     genotypes_filter = set_GEMINI_Genotypes_Filter(form.affected_filter.data, form.unaffected_filter.data, form.unknown_filter.data, form.affected_number.data, form.unaffected_number.data, form.unknown_number.data, form.mode.data)
     allele_freqs_filter = set_GEMINI_AF_Filter(form.evs_eur.data, form.evs_afr.data, form.evs_all.data,
                                                form.kg_eur.data, form.kg_afr.data, form.kg_amr.data,
-                                               form.kg_asn.data, form.kg_all.data)
+                                               form.kg_asn.data, form.kg_all.data, form.exac_eur.data, form.exac_fin.data,
+                                               form.exac_afr.data, form.exac_amr.data, form.exac_eas.data, form.exac_sas.data,
+                                               form.exac_all, form.exac_oth.all)
+
     where_clause = BASE_GEMINI_QUERY_WHERE_CLAUSE
 
     if form.gene_filter.data != 'none':
@@ -234,6 +237,30 @@ def set_GEMINI_AF_Filter(evs_eur, evs_afr, evs_all, kg_eur, kg_afr, kg_amr, kg_a
 
     if kg_all != -1:
         af_filters.append("(aaf_1kg_all <= %s OR aaf_1kg_all is NULL)" % kg_all)
+
+    if exac_fin != -1:
+        af_filters.append("(aaf_adj_exac_fin <= %s OR aaf_adj_exac_fin is NULL)" % kg_all)
+
+    if exac_eur != -1:
+        af_filters.append("(aaf_adj_exac_nfe <= %s OR aaf_adj_exac_nfe is NULL)" % kg_all)
+
+    if exac_afr_ != -1:
+        af_filters.append("(aaf_adj_exac_afr <= %s OR aaf_adj_exac_afr is NULL)" % kg_all)
+
+    if exac_amr != -1:
+        af_filters.append("(aaf_adj_exac_amr <= %s OR aaf_adj_exac_amr is NULL)" % kg_all)
+
+    if exac_eas != -1:
+        af_filters.append("(aaf_adj_exac_eas <= %s OR aaf_adj_exac_eas is NULL)" % kg_all)
+
+    if exac_sas != -1:
+        af_filters.append("(aaf_adj_exac_sas <= %s OR aaf_adj_exac_sas is NULL)" % kg_all)
+
+    if exac_all != -1:
+        af_filters.append("(aaf_adj_exac_all <= %s OR aaf_adj_exac_all is NULL)" % kg_all)
+
+    if exac_oth != -1:
+        af_filters.append("(aaf_adj_exac_oth <= %s OR aaf_adj_exac_oth is NULL)" % kg_all)
 
     af_filter_string = " AND ".join(af_filters)
 
