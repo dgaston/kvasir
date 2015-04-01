@@ -239,28 +239,28 @@ def set_GEMINI_AF_Filter(evs_eur, evs_afr, evs_all, kg_eur, kg_afr, kg_amr, kg_a
         af_filters.append("(aaf_1kg_all <= %s OR aaf_1kg_all is NULL)" % kg_all)
 
     if exac_fin != -1:
-        af_filters.append("(aaf_adj_exac_fin <= %s OR aaf_adj_exac_fin is NULL)" % kg_all)
+        af_filters.append("(aaf_adj_exac_fin <= %s OR aaf_adj_exac_fin is NULL)" % exac_fin)
 
     if exac_eur != -1:
-        af_filters.append("(aaf_adj_exac_nfe <= %s OR aaf_adj_exac_nfe is NULL)" % kg_all)
+        af_filters.append("(aaf_adj_exac_nfe <= %s OR aaf_adj_exac_nfe is NULL)" % exac_eur)
 
     if exac_afr != -1:
-        af_filters.append("(aaf_adj_exac_afr <= %s OR aaf_adj_exac_afr is NULL)" % kg_all)
+        af_filters.append("(aaf_adj_exac_afr <= %s OR aaf_adj_exac_afr is NULL)" % exac_afr)
 
     if exac_amr != -1:
-        af_filters.append("(aaf_adj_exac_amr <= %s OR aaf_adj_exac_amr is NULL)" % kg_all)
+        af_filters.append("(aaf_adj_exac_amr <= %s OR aaf_adj_exac_amr is NULL)" % exac_amr)
 
     if exac_eas != -1:
-        af_filters.append("(aaf_adj_exac_eas <= %s OR aaf_adj_exac_eas is NULL)" % kg_all)
+        af_filters.append("(aaf_adj_exac_eas <= %s OR aaf_adj_exac_eas is NULL)" % exac_eas)
 
     if exac_sas != -1:
-        af_filters.append("(aaf_adj_exac_sas <= %s OR aaf_adj_exac_sas is NULL)" % kg_all)
+        af_filters.append("(aaf_adj_exac_sas <= %s OR aaf_adj_exac_sas is NULL)" % exac_sas)
 
     if exac_all != -1:
-        af_filters.append("(aaf_adj_exac_all <= %s OR aaf_adj_exac_all is NULL)" % kg_all)
+        af_filters.append("(aaf_adj_exac_all <= %s OR aaf_adj_exac_all is NULL)" % exac_all)
 
     if exac_oth != -1:
-        af_filters.append("(aaf_adj_exac_oth <= %s OR aaf_adj_exac_oth is NULL)" % kg_all)
+        af_filters.append("(aaf_adj_exac_oth <= %s OR aaf_adj_exac_oth is NULL)" % exac_oth)
 
     af_filter_string = " AND ".join(af_filters)
 
