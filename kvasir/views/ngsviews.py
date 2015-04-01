@@ -38,7 +38,6 @@ def gemini_query(project, id):
     
     form = GQueryForm()
 
-    print form.errors
     if form.validate_on_submit():
         #build query
         (query, genotype_filter) = kmethods.build_gemini_query_web(form)
@@ -52,7 +51,7 @@ def gemini_query(project, id):
 
         return redirect(url_for('loading', task_id=celery_result.id))
 
-    
+    print form.errors
     gq = GeminiQuery(gdb.file)
     gq.run("select * from samples")
     
