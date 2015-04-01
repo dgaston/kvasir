@@ -152,6 +152,7 @@ def view_result(task_id):
         (header, js_header, results_file, gdb_file, query, genotype_filter, results_string) = result.get()
     except:
         print result.traceback
+        return render_template('500.html')
 
     session['header'] = header
     session['js_header'] = js_header
