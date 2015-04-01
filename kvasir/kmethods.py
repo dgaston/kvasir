@@ -48,7 +48,7 @@ def build_gemini_query_web(form):
                                                form.kg_eur.data, form.kg_afr.data, form.kg_amr.data,
                                                form.kg_asn.data, form.kg_all.data, form.exac_eur.data, form.exac_fin.data,
                                                form.exac_afr.data, form.exac_amr.data, form.exac_eas.data, form.exac_sas.data,
-                                               form.exac_all, form.exac_oth)
+                                               form.exac_all.data, form.exac_oth.data)
 
     where_clause = BASE_GEMINI_QUERY_WHERE_CLAUSE
 
