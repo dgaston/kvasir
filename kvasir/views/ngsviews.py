@@ -37,7 +37,8 @@ def gemini_query(project, id):
         return redirect(url_for('index'))
     
     form = GQueryForm()
-    
+
+    print form.errors
     if form.validate_on_submit():
         #build query
         (query, genotype_filter) = kmethods.build_gemini_query_web(form)
