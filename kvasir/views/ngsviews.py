@@ -12,6 +12,7 @@ from flask import jsonify
 from flask import request
 from flask import make_response
 from flask import session
+from flask import g
 
 from flask.ext.login import login_required
 from flask.ext.security import roles_accepted
@@ -161,7 +162,7 @@ def view_result(task_id):
     result_elements = results_string.split('_')
     dbid = result_elements[2]
 
-    g = models.GDatabase.objects.get(id = ObjectId(dbid))
+    gdb = models.GDatabase.objects.get(id = ObjectId(dbid))
     user = User.objects.get(id=g.user.id)
 
     r = models.GResult(header = header, js_header = js_header, query = query, query_slug = result_elements[3],
@@ -171,7 +172,7 @@ def view_result(task_id):
     r.json.put(file, content_type = 'application/json')
     r.save()
 
-    g.results.append(r)
+    gdb.results.append(r)
     g.save()
 
     return render_template('gemini_query_result.html', file = gdb_file, query = query,
