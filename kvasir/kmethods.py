@@ -38,7 +38,6 @@ def print_excel_report(query, database, header, gq, filename):
 
     wb.save(filename)
 
-
 def build_gemini_query_web(form):
     base_query = set_GEMINI_QUERY_BASE(form.query.data)
     table = set_GEMINI_QUERY_TABLE(form.query.data)

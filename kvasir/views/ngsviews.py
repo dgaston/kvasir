@@ -165,7 +165,10 @@ def view_result(task_id):
     user = User.objects.get(id=g.user.id)
 
     r = models.GResult(header = header, js_header = js_header, query = query, query_slug = result_elements[3],
-                       json = results_file, created_on = datetime.datetime.now, created_by = user, last_accessed = datetime.datetime.now)
+                       created_on = datetime.datetime.now, created_by = user, last_accessed = datetime.datetime.now)
+
+    file = open(results_file, 'rb')
+    r.json.put(file, content_type = 'application/json')
     r.save()
 
     g.results.append(r)
