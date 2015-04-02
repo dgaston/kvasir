@@ -168,7 +168,8 @@ def view_result(task_id):
     r = models.GResult(header = header, js_header = js_header, query = query, query_slug = result_elements[3],
                        created_on = datetime.datetime.now, created_by = user, last_accessed = datetime.datetime.now)
 
-    file = open(results_file, 'rb')
+    json_results_fh = os.path.join(STATIC_FOLDER, results_file)
+    file = open(json_results_fh, 'rb')
     r.json.put(file, content_type = 'application/json')
     r.save()
 
