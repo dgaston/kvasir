@@ -7,20 +7,22 @@ import pipeline as pipe
 
 from WorkflowConfig import parseProjectConfig
 from multiprocessing import Pool
+from collections import defaultdict
 
 
 def run_bwa(configuration):
     '''Run BWA MEM with multiple threads on one or more samples'''
 
+    #print type(configuration)
     sys.stdout.write("Preparing to run BWA on the following samples:\n")
     for sample in configuration['samples']:
         sys.stdout.write("%s\n" % sample['name'])
 
     # Run BWA in multi-threaded mode on each sample specified
     for sample in configuration['samples']:
-        if sample['bam']:
-            sys.stdout.write("Sample %s already aligned. Skipping...\n" % sample['name'])
-        else:
+        try:
+            sample['bam']
+        except KeyError:
             sys.stdout.write("Running BWA for sample %s\n" % sample['name'])
             output = "%s.sorted" % sample['name']
             logfile = "%s.bwa.log" % sample['name']
@@ -346,11 +348,13 @@ def run_GEMINI(configuration):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config_file', help="Input configuration file")
-    parser.add_argument('-s', '--stage', help="Stage to restart from", default=1, type=int)
+    parser.add_argument('-c', '--config_file', help="Input configuration file [Required]")
+    parser.add_argument('-s', '--stage', help="Stage to restart from [Default = 1]", default=1, type=int)
 
     args = parser.parse_args()
-    configuration = parseProjectConfig(args.config_file)
+
+    configuration = (parseProjectConfig(args.config_file))
+    #print type(configuration)
 
     sys.stdout.write("Starting stage: %s\n" % args.stage)
 
@@ -370,24 +374,24 @@ if __name__ == "__main__":
         run_Recalibrator(configuration)
         args.stage = args.stage + 1
 
-    if args.stage == 5:
-        run_UnifiedGenotyper(configuration)
-        args.stage = args.stage + 1
-
-    if args.stage == 6:
-        run_AnnotationAndFilters(configuration)
-        args.stage = args.stage + 1
-
-    if args.stage == 7:
-        run_Normalization(configuration)
-        args.stage = args.stage + 1
-
-    if args.stage == 8:
-        run_SNPEff(configuration)
-        args.stage = args.stage + 1
-
-    if args.stage == 9:
-        run_GEMINI(configuration)
-        args.stage = args.stage + 1
+    # if args.stage == 5:
+    #     run_UnifiedGenotyper(configuration)
+    #     args.stage = args.stage + 1
+    #
+    # if args.stage == 6:
+    #     run_AnnotationAndFilters(configuration)
+    #     args.stage = args.stage + 1
+    #
+    # if args.stage == 7:
+    #     run_Normalization(configuration)
+    #     args.stage = args.stage + 1
+    #
+    # if args.stage == 8:
+    #     run_SNPEff(configuration)
+    #     args.stage = args.stage + 1
+    #
+    # if args.stage == 9:
+    #     run_GEMINI(configuration)
+    #     args.stage = args.stage + 1
 
     sys.stdout.write("Completed pipeline\n")

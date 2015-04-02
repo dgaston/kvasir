@@ -2,6 +2,7 @@ import sys
 import hashlib
 import json
 import os
+import datetime
 
 from flask import render_template
 from flask import flash
@@ -156,6 +157,19 @@ def view_result(task_id):
 
     session['header'] = header
     session['js_header'] = js_header
+
+    result_elements = results_string.split('_')
+    dbid = result_elements[2]
+
+    g = models.GDatabase.objects.get(id = ObjectId(dbid))
+    user = User.objects.get(id=g.user.id)
+
+    r = models.GResult(header = header, js_header = js_header, query = query, query_slug = result_elements[3],
+                       json = results_file, created_on = datetime.datetime.now, created_by = user, last_accessed = datetime.datetime.now)
+    r.save()
+
+    g.results.append(r)
+    g.save()
 
     return render_template('gemini_query_result.html', file = gdb_file, query = query,
                        genotype_filter = genotype_filter, header = header,

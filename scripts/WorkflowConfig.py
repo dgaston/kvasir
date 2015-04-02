@@ -10,7 +10,8 @@ def parseProjectConfig(file):
 
     sections = config.sections()
 
-    configuration = dict()
+    configuration = defaultdict()
+    #print type(configuration)
     configuration['version'] = config.get('information', 'version')
     configuration['clean'] = config.getboolean('information', 'clean_intermediates')
 
