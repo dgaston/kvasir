@@ -336,7 +336,7 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
                 count += 1
             file.write("""\n]\n}\n""")
 
-    return (header, js_header, results_file, gdb.file, query, genotype_filter, results_string)
+    return (header, js_header, results_file, gdb.file, query, genotype_filter, results_string, json_results_fh)
 
 @celery.task
 def test_celery ():

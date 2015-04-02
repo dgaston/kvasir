@@ -151,7 +151,7 @@ def view_result(task_id):
     result = AsyncResult(task_id)
 
     try:
-        (header, js_header, results_file, gdb_file, query, genotype_filter, results_string) = result.get()
+        (header, js_header, results_file, gdb_file, query, genotype_filter, results_string, json_results_fh) = result.get()
     except:
         print result.traceback
         return render_template('500.html')
@@ -168,7 +168,6 @@ def view_result(task_id):
     r = models.GResult(header = header, js_header = js_header, query = query, query_slug = result_elements[3],
                        created_on = datetime.datetime.now, created_by = user, last_accessed = datetime.datetime.now)
 
-    json_results_fh = os.path.join(STATIC_FOLDER, results_file)
     file = open(json_results_fh, 'rb')
     r.json.put(file, content_type = 'application/json')
     r.save()
