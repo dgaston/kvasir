@@ -337,6 +337,8 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
                 count += 1
             file.write("""\n]\n}\n""")
 
+        sys.stderr.write("DEBUG: Done writing results file\n")
+
         #Save Results to database
         sys.stderr.write("DEBUG: Saving results to database\n")
         result_elements = results_string.split('_')
