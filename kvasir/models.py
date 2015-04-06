@@ -137,7 +137,7 @@ class GDatabase(db.Document):
     results = db.ListField(db.ReferenceField('GResult'))
 
 class GResult(db.Document):
-    header = db.StringField()
+    header = db.ListField(db.StringField())
     js_header = db.ListField(db.StringField())
     json = db.FileField()
     query = db.StringField()
