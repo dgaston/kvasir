@@ -298,7 +298,7 @@ def _setupGEMINIQuery(sample_list, query_base, where_clause):
 
 
 @celery.task
-def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_string):
+def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_string, user_id):
 
     json_results_fh = os.path.join(STATIC_FOLDER, json_filename)
     results_file = "/static/%s" % json_filename
@@ -341,10 +341,8 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
 
         #Save Results to database
         sys.stderr.write("DEBUG: Saving results to database\n")
-        result_elements = results_string.split('_')
-
         sys.stderr.write("DEBUG: Fetching user\n")
-        user = models.User.objects.get(id=g.user.id)
+        user = models.User.objects.get(id=user_id)
 
         sys.stderr.write("DEBUG: Creating result object\n")
         r = models.GResult(header = header, js_header = js_header, query = query, query_slug = result_elements[3],
@@ -360,7 +358,7 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
         sys.stderr.write("DEBUG: Appending results to GEMINI database entry\n")
         gdb.results.append(r)
         sys.stderr.write("DEBUG: Saving\n")
-        g.save()
+        gdb.save()
 
     return (header, js_header, results_file, gdb.file, query, genotype_filter, results_string, json_results_fh)
 

@@ -12,6 +12,7 @@ from flask import jsonify
 from flask import request
 from flask import make_response
 from flask import session
+from flask import g
 
 from flask.ext.login import login_required
 from flask.ext.security import roles_accepted
@@ -48,7 +49,7 @@ def gemini_query(project, id):
         results_string = "results_%s_%s_%s_%s" % (mode, id, hashlib.md5(query).hexdigest(), hashlib.md5(genotype_filter).hexdigest())
         json_filename = "%s.json" % (results_string)
 
-        celery_result = kmethods.run_gemini_query.delay(id, query, genotype_filter, json_filename, mode, results_string)
+        celery_result = kmethods.run_gemini_query.delay(id, query, genotype_filter, json_filename, mode, results_string, g.user.id)
 
         return redirect(url_for('loading', task_id=celery_result.id))
 
