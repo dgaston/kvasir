@@ -343,6 +343,7 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
         sys.stderr.write("DEBUG: Saving results to database\n")
         sys.stderr.write("DEBUG: Fetching user\n")
         user = models.User.objects.get(id=user_id)
+        result_elements = results_string.split('_')
 
         sys.stderr.write("DEBUG: Creating result object\n")
         r = models.GResult(header = header, js_header = js_header, query = query, query_slug = result_elements[3],
