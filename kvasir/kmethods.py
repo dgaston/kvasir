@@ -10,6 +10,8 @@ from config import *
 from kvasir import models
 from kvasir import celery
 
+from flask import g
+
 from celery import current_task
 
 from bson.objectid import ObjectId
@@ -297,7 +299,6 @@ def _setupGEMINIQuery(sample_list, query_base, where_clause):
 
 @celery.task
 def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_string):
-    return_dict = dict()
 
     json_results_fh = os.path.join(STATIC_FOLDER, json_filename)
     results_file = "/static/%s" % json_filename
@@ -335,6 +336,29 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
                     file.write(",\n%s" % row)
                 count += 1
             file.write("""\n]\n}\n""")
+
+        #Save Results to database
+        sys.stderr.write("DEBUG: Saving results to database\n")
+        result_elements = results_string.split('_')
+
+        sys.stderr.write("DEBUG: Fetching user\n")
+        user = models.User.objects.get(id=g.user.id)
+
+        sys.stderr.write("DEBUG: Creating result object\n")
+        r = models.GResult(header = header, js_header = js_header, query = query, query_slug = result_elements[3],
+                           created_on = datetime.datetime.now, created_by = user, last_accessed = datetime.datetime.now)
+
+        sys.stderr.write("DEBUG: JSON Opening file\n")
+        file = open(json_results_fh, 'rb')
+        sys.stderr.write("DEBUG: Adding file\n")
+        r.json.put(file, content_type = 'application/json')
+        sys.stderr.write("DEBUG: Saving results\n")
+        r.save()
+
+        sys.stderr.write("DEBUG: Appending results to GEMINI database entry\n")
+        gdb.results.append(r)
+        sys.stderr.write("DEBUG: Saving\n")
+        g.save()
 
     return (header, js_header, results_file, gdb.file, query, genotype_filter, results_string, json_results_fh)
 

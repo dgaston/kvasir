@@ -50,10 +50,11 @@ def run_MarKDuplicates(configuration):
     for sample in configuration['samples']:
         logfile = "%s.markduplicates.log" % sample['name']
 
-        if sample['bam']:
+        try:
             input = sample['bam']
-        else:
+        except KeyError:
             input = "%s.sorted.bam" % sample['name']
+
         output = "%s.dedup.sorted.bam" % sample['name']
         metrics = "%s.dedup.metrics" % sample['name']
 
