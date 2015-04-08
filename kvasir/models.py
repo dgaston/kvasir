@@ -119,7 +119,7 @@ class Project(db.Document):
     gemini_databases = db.ListField(db.ReferenceField('GDatabase'))
     
     analyses = db.ListField(db.EmbeddedDocumentField('Analysis'))
-    notes = db.ListField(db.DocumentField('Note'))
+    notes = db.ListField(db.ReferenceField('Note'))
 
 class GDatabase(db.Document):
     file = db.StringField(required=True)
