@@ -209,7 +209,6 @@ class Gene(db.Document):
     pathways = db.ListField(db.ReferenceField('Pathway'))
     
     user_description = db.StringField()
-    summaries = db.ListField(db.EmbeddedDocumentField('GeneSummary'))
     
     meta = {
         'indexes': ['ensembl_id', 'hgnc_ids', 'slug']
@@ -226,13 +225,6 @@ class GeneList(db.Document):
     genes = db.ListField(db.ReferenceField('Gene'))
     name = db.StringField(required=True, unique=True)
     description = db.StringField()
-
-class GeneSummary(db.EmbeddedDocument):
-    id = db.StringField()
-    text = db.StringField()
-    last_edited_by = db.ReferenceField('User')
-    last_modified = db.DateTimeField(default=datetime.datetime.now)
-    type = db.StringField()
 
 class Pathway(db.Document):
     name = db.StringField()
