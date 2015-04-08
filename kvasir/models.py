@@ -87,7 +87,7 @@ class Variant(GenericVariant):
     ref_allele = db.StringField(required=True)
     alt_allele = db.StringField(required=True)
 
-    annotation_sets = db.ListField(db.EmbeddedDocumentField('VariantAnnotationSet'))
+    annotation_sets = db.EmbeddedDocumentListField('VariantAnnotationSet')
     publications = db.ListField(db.ReferenceField('Publication'))
     
     samples = db.ListField(db.ReferenceField('Sample'))
@@ -131,7 +131,7 @@ class Project(db.Document):
     samples = db.ListField(db.ReferenceField('Sample'))
     gemini_databases = db.ListField(db.ReferenceField('GDatabase'))
 
-    notes = db.ListField(db.EmbeddedDocumentField('Note'))
+    notes = db.EmbeddedDocumentListField('Note')
 
 class GDatabase(db.Document):
     file = db.StringField(required=True)
@@ -246,14 +246,14 @@ class Gene(db.Document):
     entrez_ids = db.ListField(db.StringField())
     synonyms = db.ListField(db.StringField())
     
-    omim = db.ListField(db.EmbeddedDocumentField('OMIM'))
-    orphanet = db.ListField(db.EmbeddedDocumentField('Orphanet'))
-    transcripts = db.ListField(db.EmbeddedDocumentField('Transcript'))
-    goslim_terms = db.ListField(db.EmbeddedDocumentField('GOSlim'))
-    interactions = db.ListField(db.EmbeddedDocumentField('Interaction')) 
-    psgn_connections = db.ListField(db.EmbeddedDocumentField('PSGN'))
-    expression = db.ListField(db.EmbeddedDocumentField('Expression'))
-    phenotypes = db.ListField(db.EmbeddedDocumentField('Phenotype'))
+    omim = db.EmbeddedDocumentListField('OMIM')
+    orphanet = db.EmbeddedDocumentListField('Orphanet')
+    transcripts = db.EmbeddedDocumentListField('Transcript')
+    goslim_terms = db.EmbeddedDocumentListField('GOSlim')
+    interactions = db.EmbeddedDocumentListField('Interaction')
+    psgn_connections = db.EmbeddedDocumentListField('PSGN')
+    expression = db.EmbeddedDocumentListField('Expression')
+    phenotypes = db.EmbeddedDocumentListField('Phenotype')
     
     paralogs = db.ListField(db.ReferenceField('Gene'))
     variants = db.ListField(db.ReferenceField('Variant'))
@@ -329,7 +329,7 @@ class GenericGenomicRegion(db.Document):
 
 
 class CoverageStatRegion(GenericGenomicRegion):
-    sample_coverage = db.ListField(db.EmbeddedDocumentField('SampleCoverage'))
+    sample_coverage = db.EmbeddedDocumentListField('SampleCoverage')
     low_cov_samples = db.ListField(db.ReferenceField('Sample'))
     cov_gap_samples = db.ListField(db.ReferenceField('Sample'))
     no_read_samples = db.ListField(db.ReferenceField('Sample'))
