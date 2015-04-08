@@ -8,6 +8,8 @@ from flask.ext.mongoengine import MongoEngine
 from flask.ext.mongoengine import MongoEngineSessionInterface
 from flask.ext.security import Security, MongoEngineUserDatastore
 
+from pymongo import read_preferences
+
 from celery import Celery
 
 from config import ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, UPLOAD_FOLDER
@@ -28,7 +30,7 @@ def make_celery(app):
 app = Flask(__name__)
 app.config.from_object('config')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config["MONGODB_SETTINGS"] = {'DB': "kvasir"}
+app.config["MONGODB_SETTINGS"] = {'db': 'kvasir', 'read_preference': read_preferences.ReadPreference.PRIMARY}
 
 #Configure Celery Object
 #You may want to configure individual settings here, particularly for larger compute environments
