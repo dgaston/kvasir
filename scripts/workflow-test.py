@@ -146,43 +146,43 @@ def run_Recalibrator(configuration):
         output = "%s.recalibrated.sorted.bam" % sample['name']
 
         #Calculate covariates
-        command1 = ("java -Xmx4g -jar %s -T BaseRecalibrator -I %s -o %s -R %s --knownSites %s"
-                    % (configuration['gatk_bin'], realigned, recal_config, configuration['reference_genome'], configuration['dbsnp']))
+        #command1 = ("java -Xmx4g -jar %s -T BaseRecalibrator -I %s -o %s -R %s --knownSites %s"
+        #            % (configuration['gatk_bin'], realigned, recal_config, configuration['reference_genome'], configuration['dbsnp']))
 
         #Second pass after bqsr
-        command2 = ("java -Xmx4g -jar %s -T BaseRecalibrator -I %s -o %s -R %s --knownSites %s -BQSR %s"
-                    % (configuration['gatk_bin'], realigned, post_recal, configuration['reference_genome'], configuration['dbsnp'], recal_config))
+        #command2 = ("java -Xmx4g -jar %s -T BaseRecalibrator -I %s -o %s -R %s --knownSites %s -BQSR %s"
+        #            % (configuration['gatk_bin'], realigned, post_recal, configuration['reference_genome'], configuration['dbsnp'], recal_config))
 
         #Print recalibrated BAM
         command3 = ("java -Xmx4g -jar %s -T PrintReads -I %s -o %s -R %s -BQSR %s"
                     % (configuration['gatk_bin'], realigned, output, configuration['reference_genome'], recal_config))
 
         #Analysis of Covariates and Plot Printing
-        command4 = ("java -Xmx4g -jar %s -T AnalyzeCovariates -before %s -after %s -plots %s"
-                    % (configuration['gatk_bin'],recal_config, post_recal, plots))
+        #command4 = ("java -Xmx4g -jar %s -T AnalyzeCovariates -before %s -after %s -plots %s"
+        #            % (configuration['gatk_bin'],recal_config, post_recal, plots))
 
-        instructions1.append((command1, logfile1))
-        instructions2.append((command2, logfile2))
+        #instructions1.append((command1, logfile1))
+        #instructions2.append((command2, logfile2))
         instructions3.append((command3, logfile3))
-        instructions4.append((command4, logfile4))
+        #instructions4.append((command4, logfile4))
 
-    sys.stdout.write("Running multiprocessing of BaseRecalibrator\n")
-    pool = Pool(processes=int(configuration['num_cores']))
-    result1 = pool.map_async(pipe.runMulti, instructions1)
-    codes = result1.get()
-    pool.close()
-    pool.join()
-
-    pipe.checkReturnCodes(codes)
-
-    sys.stdout.write("Running multiprocessing of Post Calibration BaseRecalibrator\n")
-    pool2 = Pool(processes=int(configuration['num_cores']))
-    result2 = pool.map_async(pipe.runMulti, instructions2)
-    codes = result2.get()
-    pool2.close()
-    pool2.join()
-
-    pipe.checkReturnCodes(codes)
+    # sys.stdout.write("Running multiprocessing of BaseRecalibrator\n")
+    # pool = Pool(processes=int(configuration['num_cores']))
+    # result1 = pool.map_async(pipe.runMulti, instructions1)
+    # codes = result1.get()
+    # pool.close()
+    # pool.join()
+    #
+    # pipe.checkReturnCodes(codes)
+    #
+    # sys.stdout.write("Running multiprocessing of Post Calibration BaseRecalibrator\n")
+    # pool2 = Pool(processes=int(configuration['num_cores']))
+    # result2 = pool.map_async(pipe.runMulti, instructions2)
+    # codes = result2.get()
+    # pool2.close()
+    # pool2.join()
+    #
+    # pipe.checkReturnCodes(codes)
 
     sys.stdout.write("Running multiprocessing of PrintReads\n")
     pool3 = Pool(processes=int(configuration['num_cores']))
@@ -193,14 +193,14 @@ def run_Recalibrator(configuration):
 
     pipe.checkReturnCodes(codes)
 
-    sys.stdout.write("Running Analysis and Plotting of Covariates\n")
-    pool4 = Pool(processes=int(configuration['num_cores']))
-    result4 = pool4.map_async(pipe.runMulti, instructions4)
-    codes = result4.get()
-    pool4.close()
-    pool4.join()
-
-    pipe.checkReturnCodes(codes)
+    # sys.stdout.write("Running Analysis and Plotting of Covariates\n")
+    # pool4 = Pool(processes=int(configuration['num_cores']))
+    # result4 = pool4.map_async(pipe.runMulti, instructions4)
+    # codes = result4.get()
+    # pool4.close()
+    # pool4.join()
+    #
+    # pipe.checkReturnCodes(codes)
 
     sys.stdout.write("Finished recalibrating bases\n")
 

@@ -42,13 +42,15 @@ app.config.update(
 
 celery = make_celery(app)
 
-try:
-    db = MongoEngine(app)
-except:
-    sys.stdout.write("Using docker environment variables to connect to linked MongoDB container\n")
-    uri_string = "mongodb://%s:%s/kvasir" % (os.environ['DB_PORT_28017_TCP_ADDR'], os.environ['DB_PORT_27017_TCP_PORT'])
-    app.config["MONGODB_SETTINGS"] = {'DB': "kvasir", "host": uri_string}
-    db = MongoEngine(app)
+db = MongoEngine(app)
+
+# try:
+#     db = MongoEngine(app)
+# except:
+#     sys.stdout.write("Using docker environment variables to connect to linked MongoDB container\n")
+#     uri_string = "mongodb://%s:%s/kvasir" % (os.environ['DB_PORT_28017_TCP_ADDR'], os.environ['DB_PORT_27017_TCP_PORT'])
+#     app.config["MONGODB_SETTINGS"] = {'DB': "kvasir", "host": uri_string}
+#     db = MongoEngine(app)
     
 lm = LoginManager()
 lm.init_app(app)
