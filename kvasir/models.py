@@ -69,6 +69,10 @@ class Role(db.Document, RoleMixin):
     name = db.StringField(max_length=80, unique=True)
     description = db.StringField(max_length=255)
 
+class VariantAnnotationSet(db.EmbeddedDocument):
+    annotation_source = db.StringField(required=True)
+    annotator = db.StringField(required=True)
+
 class GenericVariant(db.Document):
     genes = db.ListField(db.ReferenceField('Gene'))
     strand = db.StringField(max_length=10)
@@ -83,6 +87,7 @@ class Variant(GenericVariant):
     ref_allele = db.StringField(required=True)
     alt_allele = db.StringField(required=True)
 
+    annotation_sets = db.ListField(db.EmbeddedDocumentField('VariantAnnotationSet'))
     publications = db.ListField(db.ReferenceField('Publication'))
     
     samples = db.ListField(db.ReferenceField('Sample'))
@@ -95,6 +100,14 @@ class Publication(db.Document):
     doi = db.StringField()
     pdf = db.FileField()
 
+class Note(db.EmbeddedDocument):
+    user = db.ReferenceField('User')
+    body = db.StringField(required=True)
+    posted = db.DateTimeField(default=datetime.datetime.now, required=True)
+
+    meta = {
+        'ordering': ['-posted']
+    }
 
 class Project(db.Document):
     project_name = db.StringField(max_length=100, required=True, unique=True)
@@ -117,9 +130,8 @@ class Project(db.Document):
     files = db.ListField(db.ReferenceField('File'))
     samples = db.ListField(db.ReferenceField('Sample'))
     gemini_databases = db.ListField(db.ReferenceField('GDatabase'))
-    
-    analyses = db.ListField(db.EmbeddedDocumentField('Analysis'))
-    notes = db.ListField(db.ReferenceField('Note'))
+
+    notes = db.ListField(db.EmbeddedDocumentField('Note'))
 
 class GDatabase(db.Document):
     file = db.StringField(required=True)
@@ -140,15 +152,6 @@ class GResult(db.Document):
     created_on = db.DateTimeField()
     created_by = db.ReferenceField('User')
     last_accessed = db.DateTimeField()
-
-class Note(db.Document):
-    user = db.ReferenceField('User')
-    body = db.StringField(required=True)
-    posted = db.DateTimeField(default=datetime.datetime.now, required=True)
-    
-    meta = {
-        'ordering': ['-posted']
-    }
 
 class Task(db.Document):
     assigned_user = db.ReferenceField('User')

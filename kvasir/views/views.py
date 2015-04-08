@@ -66,8 +66,7 @@ def project(slug):
         flash('Your note has been added.')
         return redirect(url_for('project', slug=project.slug))
         
-    return render_template('project.html', analyses=sorted(project.analyses, key=lambda analysis: analysis.date, reverse=True),
-                           project=project, users=users, id=id, form=form)
+    return render_template('project.html', project=project, users=users, id=id, form=form)
 
 @app.route('/upload/<name>', methods = ['GET', 'POST'])
 @login_required
