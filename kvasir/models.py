@@ -83,15 +83,9 @@ class Variant(GenericVariant):
     ref_allele = db.StringField(required=True)
     alt_allele = db.StringField(required=True)
     
-    annotation_sets = db.ListField(db.EmbeddedDocumentField('VariantAnnotationSet'))
     publications = db.ListField(db.ReferenceField('Publication'))
     
     samples = db.ListField(db.ReferenceField('Sample'))
-
-class VariantAnnotationSet(db.DynamicEmbeddedDocument):
-    annotation_source = db.StringField(required=True)
-    annotator = db.StringField(required=True)
-    
 
 class Publication(db.Document):
     title = db.StringField(required=True)
