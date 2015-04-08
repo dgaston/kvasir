@@ -169,6 +169,57 @@ class HumanPhenotype(db.Document):
     hpo_term = db.StringField()
     disease_ids = db.ListField(db.StringField())
 
+class Pathway(db.Document):
+    name = db.StringField()
+    source = db.StringField()
+    external_id = db.StringField()
+    members = db.ListField(db.ReferenceField('Gene'))
+
+class OMIM(db.EmbeddedDocument):
+    omim_id = db.StringField()
+    description = db.StringField()
+
+class Orphanet(db.EmbeddedDocument):
+    accession = db.StringField()
+    description = db.StringField()
+
+class Phenotype(db.EmbeddedDocument):
+    term = db.StringField()
+    id = db.StringField()
+
+class Transcript(db.EmbeddedDocument):
+    transcript_id = db.StringField()
+    protein_id = db.StringField()
+    start = db.IntField()
+    end = db.IntField()
+    biotype = db.StringField()
+
+class Expression(db.EmbeddedDocument):
+    cell_type = db.StringField()
+    disease_state = db.StringField()
+    organism_part = db.StringField()
+
+class Interaction(db.EmbeddedDocument):
+    interactor_ensembl_id = db.StringField()
+    system = db.StringField()
+    phenotype = db.StringField()
+    modifications = db.StringField()
+    qualifications = db.StringField()
+    type = db.StringField()
+    source = db.StringField()
+    throughput = db.StringField()
+    score = db.FloatField
+    pubmed_id = db.StringField()
+    interaction_source_id = db.StringField()
+
+class GOSlim(db.EmbeddedDocument):
+    go_id = db.StringField()
+    go_desc = db.StringField()
+
+class PSGN(db.Document):
+    interactor_ensembl_id = db.StringField()
+    similarity = db.FloatField()
+
 class Gene(db.Document):
     ensembl_id = db.StringField(required=True)
     slug = db.StringField(required=True)
@@ -225,57 +276,6 @@ class GeneList(db.Document):
     genes = db.ListField(db.ReferenceField('Gene'))
     name = db.StringField(required=True, unique=True)
     description = db.StringField()
-
-class Pathway(db.Document):
-    name = db.StringField()
-    source = db.StringField()
-    external_id = db.StringField()
-    members = db.ListField(db.ReferenceField('Gene'))
-
-class OMIM(db.EmbeddedDocument):
-    omim_id = db.StringField()
-    description = db.StringField()
-
-class Orphanet(db.EmbeddedDocument):
-    accession = db.StringField()
-    description = db.StringField()
-
-class Phenotype(db.EmbeddedDocument):
-    term = db.StringField()
-    id = db.StringField()
-
-class Transcript(db.EmbeddedDocument):
-    transcript_id = db.StringField()
-    protein_id = db.StringField()
-    start = db.IntField()
-    end = db.IntField()
-    biotype = db.StringField()
-
-class Expression(db.EmbeddedDocument):
-    cell_type = db.StringField()
-    disease_state = db.StringField()
-    organism_part = db.StringField()
-
-class Interaction(db.EmbeddedDocument):
-    interactor_ensembl_id = db.StringField()
-    system = db.StringField()
-    phenotype = db.StringField()
-    modifications = db.StringField()
-    qualifications = db.StringField()
-    type = db.StringField()
-    source = db.StringField()
-    throughput = db.StringField()
-    score = db.FloatField
-    pubmed_id = db.StringField()
-    interaction_source_id = db.StringField()
-
-class GOSlim(db.EmbeddedDocument):
-    go_id = db.StringField()
-    go_desc = db.StringField()
-
-class PSGN(db.Document):
-    interactor_ensembl_id = db.StringField()
-    similarity = db.FloatField()
 
 class Sample(db.Document):
     sample_id = db.StringField(required=True, unique=True)
