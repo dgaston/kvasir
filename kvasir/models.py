@@ -310,7 +310,7 @@ class File(db.Document):
     uploaded_by = db.ReferenceField('User', required=True)
     projects = db.ListField(db.ReferenceField('Project'))
     
-    file_notes = db.ListField(db.EmbeddedDocumentField('FileNote'))
+    file_notes = db.EmbeddedDocumentListField('FileNote')
 
 class SampleCoverage(db.EmbeddedDocument):
     sample = db.ReferenceField('Sample')
