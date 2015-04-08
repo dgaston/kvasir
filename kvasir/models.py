@@ -109,6 +109,11 @@ class Note(db.EmbeddedDocument):
         'ordering': ['-posted']
     }
 
+class Analysis(db.EmbeddedDocument):
+    user = db.ReferenceField('User')
+    experiment = db.StringField()
+    date = db.DateTimeField(default=datetime.datetime.now, required=True)
+
 class Project(db.Document):
     project_name = db.StringField(max_length=100, required=True, unique=True)
     slug = db.StringField(max_length=255, required=True, unique=True)
@@ -131,6 +136,7 @@ class Project(db.Document):
     samples = db.ListField(db.ReferenceField('Sample'))
     gemini_databases = db.ListField(db.ReferenceField('GDatabase'))
 
+    analyses = db.db.EmbeddedDocumentListField('Analysis')
     notes = db.EmbeddedDocumentListField('Note')
 
 class GDatabase(db.Document):
