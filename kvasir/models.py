@@ -294,6 +294,12 @@ class Sample(db.Document):
     
     variants = db.ListField(db.ReferenceField('Variant'))
 
+class FileNote(db.EmbeddedDocument):
+    body = db.StringField(required=True)
+    posted = db.DateTimeField(default=datetime.datetime.now, required=True)
+
+    user = db.ReferenceField('User', required=True)
+
 class File(db.Document):
     name = db.StringField(required=True)
     desc = db.StringField()
@@ -305,13 +311,6 @@ class File(db.Document):
     projects = db.ListField(db.ReferenceField('Project'))
     
     file_notes = db.ListField(db.EmbeddedDocumentField('FileNote'))
-
-class FileNote(db.EmbeddedDocument):
-    body = db.StringField(required=True)
-    posted = db.DateTimeField(default=datetime.datetime.now, required=True)
-    
-    user = db.ReferenceField('User', required=True)
-
 
 class GenericGenomicRegion(db.Document):
     genome = db.StringField(required=True)
