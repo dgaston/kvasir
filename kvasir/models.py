@@ -312,6 +312,10 @@ class File(db.Document):
     
     file_notes = db.ListField(db.EmbeddedDocumentField('FileNote'))
 
+class SampleCoverage(db.EmbeddedDocument):
+    sample = db.ReferenceField('Sample')
+    coverage = db.StringField()
+
 class GenericGenomicRegion(db.Document):
     genome = db.StringField(required=True)
     chromosome = db.StringField(required=True)
@@ -330,12 +334,6 @@ class CoverageStatRegion(GenericGenomicRegion):
     cov_gap_samples = db.ListField(db.ReferenceField('Sample'))
     no_read_samples = db.ListField(db.ReferenceField('Sample'))
     poor_qual_samples = db.ListField(db.ReferenceField('Sample'))
-
-
-class SampleCoverage(db.EmbeddedDocument):
-    sample = db.ReferenceField('Sample')
-    coverage = db.StringField()
-
 
 class Resource(db.Document):
     resource_type = db.StringField()
