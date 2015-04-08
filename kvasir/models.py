@@ -82,7 +82,7 @@ class Variant(GenericVariant):
     build = db.StringField(required=True)
     ref_allele = db.StringField(required=True)
     alt_allele = db.StringField(required=True)
-    
+
     publications = db.ListField(db.ReferenceField('Publication'))
     
     samples = db.ListField(db.ReferenceField('Sample'))
@@ -119,7 +119,7 @@ class Project(db.Document):
     gemini_databases = db.ListField(db.ReferenceField('GDatabase'))
     
     analyses = db.ListField(db.EmbeddedDocumentField('Analysis'))
-    notes = db.ListField(db.EmbeddedDocumentField('Note'))
+    notes = db.ListField(db.DocumentField('Note'))
 
 class GDatabase(db.Document):
     file = db.StringField(required=True)
@@ -141,7 +141,7 @@ class GResult(db.Document):
     created_by = db.ReferenceField('User')
     last_accessed = db.DateTimeField()
 
-class Note(db.EmbeddedDocument):
+class Note(db.Document):
     user = db.ReferenceField('User')
     body = db.StringField(required=True)
     posted = db.DateTimeField(default=datetime.datetime.now, required=True)
