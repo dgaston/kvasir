@@ -78,9 +78,8 @@ def add_GDB(project, file, name):
     p.save()
 
 @data_manager.option('-n', '--name', dest='name', help='Project Name')
-@data_manager.option('-t', '--type', dest='type', help='Project Type (Marker, NGS)')
 def create_project(name, type):
-    project = models.Project(project_name=name, slug=name, type=type)
+    project = models.Project(project_name=name, slug=name)
     project.save()
 
 @data_manager.option('-p', '--project', dest='project', help='Project ID')

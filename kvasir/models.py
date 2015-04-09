@@ -117,7 +117,6 @@ class Analysis(db.EmbeddedDocument):
 class Project(db.Document):
     project_name = db.StringField(max_length=100, required=True, unique=True)
     slug = db.StringField(max_length=255, required=True, unique=True)
-    type = db.StringField(max_length=50, required=True)
     project_desc = db.StringField()
     path = db.StringField()
     assembly_dir = db.StringField()
