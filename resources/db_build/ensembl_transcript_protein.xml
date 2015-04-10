@@ -1,0 +1,13 @@
+<!DOCTYPE Query>
+<Query client="true" processor="TSV" limit="-1" header="1" uniqueRows = "1">
+	<Dataset name="hsapiens_gene_ensembl">
+		<Attribute name = "ensembl_gene_id" />
+		<Attribute name = "ensembl_transcript_id" />
+		<Attribute name = "ensembl_peptide_id" />
+		<Attribute name = "transcript_start" />
+		<Attribute name = "transcript_end" />
+		<Attribute name = "transcript_biotype" />
+		<Attribute name = "transcript_status" />
+		<Attribute name = "transcript_db_name" />
+	</Dataset>
+</Query>
