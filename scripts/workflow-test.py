@@ -259,7 +259,7 @@ def run_HaplotypeCaller(configuration):
     sys.stdout.write("Finished Running HaplotypeCaller\n")
     sys.stdout.write("Running Joint Genotyping on Cohort\n")
 
-    command = ("java -Xmx4G -jar %s -T HaplotypeCaller -R %s"
+    command = ("java -Xmx4G -jar %s -T GenotypeGVCFs -R %s"
                % (configuration['gatk_bin'], configuration['reference_genome']))
 
     code = pipe.runAndLogCommand(command, logfile)

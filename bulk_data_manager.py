@@ -638,7 +638,7 @@ def populate_genes(file, hgnc, lof_file, entrez, uniprot, ucsc, ccds):
                 else:
                     duplicates[row['Ensembl Gene ID']] = 1
                     g = models.Gene(ensembl_id = row['Ensembl Gene ID'], chromosome = row['Chromosome Name'],
-                                band = row['Band'], biotype = row['Gene Biotype'], status = row['Status (gene)'],
+                                band = row['Band'], biotype = row['Gene type'], status = row['Status (gene)'],
                                 strand = row['Strand'], start = row['Gene Start (bp)'], end = row['Gene End (bp)'],
                                 description = row['Description'], slug = row['Ensembl Gene ID'],
                                 macarthur_lof_score = score, macarthur_lof_rank = rank, macarthur_lof_tolerant = tolerant)
