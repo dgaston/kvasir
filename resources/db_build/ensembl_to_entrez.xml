@@ -1,0 +1,7 @@
+<!DOCTYPE Query>
+<Query client="true" processor="TSV" limit="-1" header="1" uniqueRows = "1">
+	<Dataset name="hsapiens_gene_ensembl">
+		<Attribute name = "ensembl_gene_id" />
+		<Attribute name = "entrezgene" />
+	</Dataset>
+</Query>

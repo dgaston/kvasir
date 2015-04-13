@@ -1,12 +1,14 @@
+pyvcf
+gemini
 flask-mongoengine
 flask-login
 flask-security
 py-bcrypt
 flask-mail
-hashlib
 flask-admin
 flask-wtf
 flask-script
 pyexcelerate
 redis
 celery
+uwsgi
