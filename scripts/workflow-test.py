@@ -161,7 +161,7 @@ def run_Recalibrator(configuration):
         #command4 = ("java -Xmx4g -jar %s -T AnalyzeCovariates -before %s -after %s -plots %s"
         #            % (configuration['gatk_bin'],recal_config, post_recal, plots))
 
-        #instructions1.append((command1, logfile1))
+        instructions1.append((command1, logfile1))
         #instructions2.append((command2, logfile2))
         instructions3.append((command3, logfile3))
         #instructions4.append((command4, logfile4))
