@@ -166,14 +166,14 @@ def run_Recalibrator(configuration):
         instructions3.append((command3, logfile3))
         #instructions4.append((command4, logfile4))
 
-    # sys.stdout.write("Running multiprocessing of BaseRecalibrator\n")
-    # pool = Pool(processes=int(configuration['num_cores']))
-    # result1 = pool.map_async(pipe.runMulti, instructions1)
-    # codes = result1.get()
-    # pool.close()
-    # pool.join()
+    sys.stdout.write("Running multiprocessing of BaseRecalibrator\n")
+    pool = Pool(processes=int(configuration['num_cores']))
+    result1 = pool.map_async(pipe.runMulti, instructions1)
+    codes = result1.get()
+    pool.close()
+    pool.join()
     #
-    # pipe.checkReturnCodes(codes)
+    pipe.checkReturnCodes(codes)
     #
     # sys.stdout.write("Running multiprocessing of Post Calibration BaseRecalibrator\n")
     # pool2 = Pool(processes=int(configuration['num_cores']))
