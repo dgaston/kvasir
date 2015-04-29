@@ -146,8 +146,8 @@ def run_Recalibrator(configuration):
         output = "%s.recalibrated.sorted.bam" % sample['name']
 
         #Calculate covariates
-        #command1 = ("java -Xmx4g -jar %s -T BaseRecalibrator -I %s -o %s -R %s --knownSites %s"
-        #            % (configuration['gatk_bin'], realigned, recal_config, configuration['reference_genome'], configuration['dbsnp']))
+        command1 = ("java -Xmx4g -jar %s -T BaseRecalibrator -I %s -o %s -R %s --knownSites %s"
+                    % (configuration['gatk_bin'], realigned, recal_config, configuration['reference_genome'], configuration['dbsnp']))
 
         #Second pass after bqsr
         #command2 = ("java -Xmx4g -jar %s -T BaseRecalibrator -I %s -o %s -R %s --knownSites %s -BQSR %s"
@@ -376,7 +376,7 @@ if __name__ == "__main__":
         args.stage = args.stage + 1
 
     # if args.stage == 5:
-    #     run_UnifiedGenotyper(configuration)
+    #     run_HaplotypeCaller(configuration)
     #     args.stage = args.stage + 1
     #
     # if args.stage == 6:

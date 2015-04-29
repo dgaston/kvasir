@@ -15,7 +15,7 @@ def runAndLogCommand(command, logfile):
         code = p.returncode
         if code:
             sys.stdout.write("An error occured. Please check %s for details\n" % logfile)
-            err.write("An error occured. Please check %s for details\n" % logfile)
+            sys.stderr.write("An error occured. Please check %s for details\n" % logfile)
 
         return code
 
