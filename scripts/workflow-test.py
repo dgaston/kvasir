@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 # -*- coding: utf-8 -*-
-import sys, argparse
-import subprocess as sub
+import sys
+import argparse
+import os
 import pipeline as pipe
 
 from WorkflowConfig import parseProjectConfig
 from multiprocessing import Pool
-from collections import defaultdict
 
 
 def run_bwa(configuration):
@@ -235,36 +235,39 @@ def run_HaplotypeCaller(configuration):
 
     instructions = []
     gvcfs = []
+    cohort_vcf = "%s.raw.vcf" % configuration['project_name']
 
     for sample in configuration['samples']:
         sample = "%s.recalibrated.sorted.bam" % sample['name']
-        output = "%s.raw.hc.snps.indels.g.vcf" % sample['name']
+        output = "%s.gvcf" % sample['name']
         logfile = "%s.hc.log" % sample['name']
 
-        command = ("java -Xmx4G -jar %s -T HaplotypeCaller -R %s -I %s -o %s --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 --dbsnp %s"
+        if os.path.isfile(output):
+            pass
+        else:
+            command = ("java -Xmx4G -jar %s -T HaplotypeCaller -R %s -I %s -o %s --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 --dbsnp %s"
                 % (configuration['gatk_bin'], configuration['reference_genome'], sample_bam, output, configuration['dbsnp']))
 
-        instructions.append((command, logfile))
-        gvcfs.append(output)
+            instructions.append((command, logfile))
+        gvcfs.append("--variant %s" % output)
 
     sys.stdout.write("Running HaplotypeCaller for samples in project %s\n" % configuration['project_name'])
-
+    pool = Pool(processes=int(configuration['num_cores']))
     result = pool.map_async(pipe.runMulti, instructions)
     codes = result.get()
     pool.close()
     pool.join()
 
     pipe.checkReturnCodes(codes)
-
     sys.stdout.write("Finished Running HaplotypeCaller\n")
-    sys.stdout.write("Running Joint Genotyping on Cohort\n")
 
-    command = ("java -Xmx4G -jar %s -T GenotypeGVCFs -R %s"
-               % (configuration['gatk_bin'], configuration['reference_genome']))
+    sys.stdout.write("Running Joint Genotyping on Cohort\n")
+    gvcf_string = " ".join(gvcfs)
+    command = ("java -Xmx4G -jar %s -T GenotypeGVCFs -R %s %s -o %s"
+               % (configuration['gatk_bin'], configuration['reference_genome'], gvcf_string, cohort_vcf))
 
     code = pipe.runAndLogCommand(command, logfile)
     pipe.checkReturnCode(code)
-
     sys.stdout.write("Finished Joint Genotyping Cohort\n")
 
 
@@ -279,7 +282,7 @@ def run_AnnotationAndFilters(configuration):
 
     sample_bam_string = " ".join(sample_inputs)
 
-    raw_vcf = "%s.raw.ug.vcf" % configuration['project_name']
+    raw_vcf = = "%s.raw.vcf" % configuration['project_name']
     annotated_vcf = "%s.annotated.vcf" % configuration['project_name']
     filtered_vcf = "%s.filtered.vcf" % configuration['project_name']
 
@@ -375,24 +378,24 @@ if __name__ == "__main__":
         run_Recalibrator(configuration)
         args.stage = args.stage + 1
 
-    # if args.stage == 5:
-    #     run_HaplotypeCaller(configuration)
-    #     args.stage = args.stage + 1
-    #
-    # if args.stage == 6:
-    #     run_AnnotationAndFilters(configuration)
-    #     args.stage = args.stage + 1
-    #
-    # if args.stage == 7:
-    #     run_Normalization(configuration)
-    #     args.stage = args.stage + 1
-    #
-    # if args.stage == 8:
-    #     run_SNPEff(configuration)
-    #     args.stage = args.stage + 1
-    #
-    # if args.stage == 9:
-    #     run_GEMINI(configuration)
-    #     args.stage = args.stage + 1
+    if args.stage == 5:
+        run_HaplotypeCaller(configuration)
+        args.stage = args.stage + 1
+
+    if args.stage == 6:
+        run_AnnotationAndFilters(configuration)
+        args.stage = args.stage + 1
+
+    if args.stage == 7:
+        run_Normalization(configuration)
+        args.stage = args.stage + 1
+
+    if args.stage == 8:
+        run_SNPEff(configuration)
+        args.stage = args.stage + 1
+
+    if args.stage == 9:
+        run_GEMINI(configuration)
+        args.stage = args.stage + 1
 
     sys.stdout.write("Completed pipeline\n")

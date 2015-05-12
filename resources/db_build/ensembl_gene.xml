@@ -8,8 +8,6 @@
 		<Attribute name="end_position"/>
 		<Attribute name="strand"/>
 		<Attribute name="band"/>
-		<Attribute name="external_gene_id"/>
-		<Attribute name="external_gene_db"/>
 		<Attribute name="transcript_count"/>
 		<Attribute name="percentage_gc_content"/>
 		<Attribute name="gene_biotype"/>
