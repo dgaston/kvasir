@@ -66,9 +66,8 @@ def add_user_role(email, role_name):
     user.save()
 
 @db_manager.option('-n', '--name', dest='name', help='Project Name')
-@db_manager.option('-t', '--type', dest='type', help='Project Type (Marker, NGS)')
 def create_project(name, type):
-    project = models.Project(project_name=name, slug=name, type=type)
+    project = models.Project(project_name=name, slug=name)
     project.save()
 
 @db_manager.option('-r', '--role', dest='role_name', help='Name of role to add')

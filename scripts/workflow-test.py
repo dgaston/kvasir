@@ -238,7 +238,7 @@ def run_HaplotypeCaller(configuration):
     cohort_vcf = "%s.raw.vcf" % configuration['project_name']
 
     for sample in configuration['samples']:
-        sample = "%s.recalibrated.sorted.bam" % sample['name']
+        sample_bam = "%s.recalibrated.sorted.bam" % sample['name']
         output = "%s.gvcf" % sample['name']
         logfile = "%s.hc.log" % sample['name']
 
@@ -282,7 +282,7 @@ def run_AnnotationAndFilters(configuration):
 
     sample_bam_string = " ".join(sample_inputs)
 
-    raw_vcf = = "%s.raw.vcf" % configuration['project_name']
+    raw_vcf = "%s.raw.vcf" % configuration['project_name']
     annotated_vcf = "%s.annotated.vcf" % configuration['project_name']
     filtered_vcf = "%s.filtered.vcf" % configuration['project_name']
 
@@ -313,8 +313,12 @@ def run_Normalization(configuration):
     normalized_vcf = "%s.normalized.vcf" % configuration['project_name']
     logfile = "%s.vt_norm.log" % configuration['project_name']
 
+    sys.stdout.write("Performing normalization\n")
     command = ("zless %s | sed 's/ID=AD.Number=./ID=AD,Number=R/' | vt decompose -s - | vt normalize -r %s - > %s" %
                (filtered_vcf, configuration['reference_genome'], normalized_vcf))
+    code = pipe.runAndLogCommand(command, logfile)
+    pipe.checkReturnCode(code)
+    sys.stdout.write("Finished Normalizing VCF\n")
 
 def run_SNPEff(configuration):
     '''Run snpEff Annotations'''
@@ -323,7 +327,7 @@ def run_SNPEff(configuration):
     snpEff_vcf = "%s.snpEff.%s.vcf" % (configuration['project_name'], configuration['snpeff_reference'])
     logfile = "%s.snpeff.log" % configuration['project_name']
 
-    command = ("java -Xmx4G -jar %s -classic -formatEff -v %s %s > %s" %
+    command = ("java -Xmx12G -jar %s -classic -formatEff -v %s %s > %s" %
                (configuration['snpeff_bin'], configuration['snpeff_reference'], normalized_vcf, snpEff_vcf))
 
     sys.stdout.write("Running snpEff\n")
@@ -391,11 +395,11 @@ if __name__ == "__main__":
         args.stage = args.stage + 1
 
     if args.stage == 8:
-        run_SNPEff(configuration)
-        args.stage = args.stage + 1
+         run_SNPEff(configuration)
+         args.stage = args.stage + 1
 
-    if args.stage == 9:
-        run_GEMINI(configuration)
-        args.stage = args.stage + 1
+    # if args.stage == 9:
+    #     run_GEMINI(configuration)
+    #     args.stage = args.stage + 1
 
     sys.stdout.write("Completed pipeline\n")
