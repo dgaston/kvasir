@@ -377,7 +377,7 @@ class JSONRowFormat(RowFormat):
     def format(self, row):
         """Emit a JSON representation of a given row
         """
-        return json.dumps(row.row)
+        return json.dumps(row.print_fields)
 
     def format_query(self, query):
         return query
