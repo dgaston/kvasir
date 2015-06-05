@@ -22,6 +22,7 @@ with open(args.input, 'rU') as variants:
     reader = csv.DictReader(variants, dialect='excel-tab')
     with open(args.output, 'w') as output:
         writer = csv.DictWriter(output, fieldnames=reader.fieldnames, dialect='excel-tab')
+        writer.writeheader()
         for row in reader:
             if gene_counts[row['gene']] > 1:
                 writer.writerow(row)
