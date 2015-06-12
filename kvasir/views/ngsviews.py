@@ -87,9 +87,6 @@ def export(file_name):
     with open(json_results_fh) as json_data:
         data = json.load(json_data)
 
-    #for key in data['data'][0]:
-    #    header.append(key)
-
     output = []
     output.append("\t".join(header))
 
@@ -141,6 +138,7 @@ def analytics(file_name):
 @login_required
 @roles_accepted('User', 'Admin')
 def loading(task_id):
+    sys.stderr.write("DEBUG: Loading Page\n")
     return render_template('loading.html', task_id=task_id)
 
 
@@ -148,7 +146,13 @@ def loading(task_id):
 @login_required
 @roles_accepted('User', 'Admin')
 def view_result(task_id):
-    result = AsyncResult(task_id)
+    sys.stderr.write("DEBUG: Viewing Result\n")
+
+    try:
+        result = AsyncResult(task_id)
+    except:
+        sys.stderr.write("Unexpected error: %s\n" % (sys.exc_info()[0]))
+        raise
 
     try:
         (header, js_header, results_file, gdb_file, query, genotype_filter, results_string, json_results_fh) = result.get()
@@ -168,22 +172,77 @@ def view_result(task_id):
 @login_required
 @roles_accepted('User', 'Admin')
 def poll_state():
-    """ A view to report the progress to the user """
-    data = 'Fail'
-    url = 'None'
-    sys.stderr.write("Polling task ID: %s\n" % request.form['task_id'])
-    if request.form['task_id']:
-        task_id = request.form['task_id']
-        result = AsyncResult(task_id)
+    sys.stderr.write("DEBUG: Polling Results: Getting Task ID from Request Form\n")
+    task_id = request.form['task_id']
 
-        if result.ready() == True:
-            sys.stderr.write("Result Ready\n")
-            data = "Completed"
-            url = url_for('view_result', task_id=task_id)
-        else:
-            #data = result.state
-            data = "Running"
+    sys.stderr.write("DEBUG: Polling Results: Getting ASyncResult\n")
+
+    try:
+        task = AsyncResult(task_id)
+    except:
+        sys.stderr.write("Unexpected error: %s\n" % (sys.exc_info()[0]))
+        raise
+
+    sys.stderr.write("DEBUG: Polling Results: Checking Task State\n")
+    if task.state == 'PENDING':
+        #job did not start yet
+        sys.stderr.write("DEBUG: Status is Pending\n")
+        response = {
+            'state': task.state,
+            'status': 'Pending...'
+        }
+    elif task.state == 'PROGRESS':
+        sys.stderr.write("DEBUG: Task Identified as in progress\n")
+        response = {
+            'state': task.state,
+        }
+    elif task.state == 'SUCCESS':
+        sys.stderr.write("DEBUG: Task Identified as Successful\n")
+        sys.stderr.write("DEBUG: State: %s\n" % task.state)
+        sys.stderr.write("DEBUG: URL: %s\n" % url_for('view_result', task_id=task_id))
+        response = {
+            'state': task.state,
+            'url': url_for('view_result', task_id=task_id)
+        }
+        sys.stderr.write("DEBUG: Response is:\n%s\n\n" % jsonify(response))
+    elif task.state == 'FAILURE':
+        # something went wrong in the background job
+        sys.stderr.write("DEBUG: Task Failed with Traceback: %s\n" % (task.traceback))
+        response = {
+            'state': task.state,
+            'status': str(task.traceback),
+            'url': url_for('500.html')
+        }
     else:
-        data = 'No task_id in the request'
+        #Unknown Task State
+        sys.stderr.write("DEBUG: Unknown task State\n")
+        response = {
+            'state': task.state,
+            'status': str(task.traceback),  # this is the exception raised
+            'url': url_for('500.html')
+        }
 
-    return jsonify(data=data, url=url)
+    sys.stderr.write("DEBUG: Sending JSON of Response\n")
+    return jsonify(response)
+
+
+    #Old Code
+    # """ A view to report the progress to the user """
+    # data = 'Fail'
+    # url = 'None'
+    # sys.stderr.write("Polling task ID: %s\n" % request.form['task_id'])
+    # if request.form['task_id']:
+    #     task_id = request.form['task_id']
+    #     result = AsyncResult(task_id)
+    #
+    #     if result.ready() == True:
+    #         sys.stderr.write("Result Ready\n")
+    #         data = "Completed"
+    #         url = url_for('view_result', task_id=task_id)
+    #     else:
+    #         #data = result.state
+    #         data = "Running"
+    # else:
+    #     data = 'No task_id in the request'
+    #
+    # return jsonify(data=data, url=url)

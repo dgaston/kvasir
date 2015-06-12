@@ -297,16 +297,20 @@ def _setupGEMINIQuery(sample_list, query_base, where_clause):
     return (query, samples)
 
 
-@celery.task
-def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_string, user_id):
+@celery.task(bind=True)
+def run_gemini_query(self, id, query, genotype_filter, json_filename, mode, results_string, user_id):
 
     json_results_fh = os.path.join(STATIC_FOLDER, json_filename)
     results_file = "/static/%s" % json_filename
 
+    self.update_state(state='PROGRESS', meta={'status': 'Setup'})
     sys.stderr.write("DEBUG: Retrieving GEMINI db object\n")
     gdb = models.GDatabase.objects.get(id = ObjectId(id))
+
     sys.stderr.write("DEBUG: Setup Query Object\n")
     gq = GeminiQuery(gdb.file, out_format=JSONRowFormat(None))
+
+    self.update_state(state='PROGRESS', meta={'status': 'Running Query'})
     sys.stderr.write("DEBUG: Run GEMINi Query\n")
     gq.run(query, genotype_filter)
 
@@ -323,8 +327,10 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
     count1 = 0
     rows = []
     sys.stderr.write("DEBUG: Checking if file exists\n")
+    self.update_state(state='PROGRESS', meta={'status': 'Checking for Existence of File'})
     if not os.path.isfile(json_results_fh):
         sys.stderr.write("DEBUG: Opening results file\n")
+        self.update_state(state='PROGRESS', meta={'status': 'Writing data to JSON file'})
         with open(json_results_fh, "wb") as file:
             count = 0
             file.write("""{\n"data": [\n""")
@@ -337,9 +343,12 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
                 count += 1
             file.write("""\n]\n}\n""")
 
+
+        self.update_state(state='PROGRESS', meta={'status': 'File Writing Complete'})
         sys.stderr.write("DEBUG: Done writing results file\n")
 
         #Save Results to database
+        self.update_state(state='PROGRESS', meta={'status': 'Sending Results to Database'})
         sys.stderr.write("DEBUG: Saving results to database\n")
         sys.stderr.write("DEBUG: Fetching user\n")
         user = models.User.objects.get(id=user_id)
@@ -360,7 +369,10 @@ def run_gemini_query(id, query, genotype_filter, json_filename, mode, results_st
         gdb.results.append(r)
         sys.stderr.write("DEBUG: Saving\n")
         gdb.save()
+        self.update_state(state='PROGRESS', meta={'status': 'Complete'})
 
+    sys.stderr.write("DEBUG: Returning Results\n")
+    self.update_state(state='SUCCESS', meta={'status': 'Results completed'})
     return (header, js_header, results_file, gdb.file, query, genotype_filter, results_string, json_results_fh)
 
 @celery.task

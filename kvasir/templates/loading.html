@@ -50,9 +50,11 @@
 			 	data: "task_id=" + task_id,
 			}).done(function(task){
 			 	console.log(task);
-			 	if (task.data == 'Completed') {
-			  		window.location.href = task.url
-			 	} else {
+			 	if (task.state == 'SUCCESS') {
+					window.location.href = task.url
+				} else if (task.state == 'FAILURE') {
+					window.location.href = task.url
+				} else {
 			  		jQuery('.status').html(task);
 			 	};
 	 
