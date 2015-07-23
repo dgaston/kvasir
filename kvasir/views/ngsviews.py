@@ -151,12 +151,13 @@ def view_result(task_id):
     try:
         result = AsyncResult(task_id)
     except:
-        sys.stderr.write("Unexpected error: %s\n" % (sys.exc_info()[0]))
+        sys.stderr.write("DEBUG: Unexpected error: %s\n" % (sys.exc_info()[0]))
         raise
 
     try:
         (header, js_header, results_file, gdb_file, query, genotype_filter, results_string, json_results_fh) = result.get()
     except:
+        sys.stderr.write("DEBUG:Error when fetching data with result.get()\n")
         print result.traceback
         return render_template('500.html')
 
