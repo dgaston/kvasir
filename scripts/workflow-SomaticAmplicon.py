@@ -347,35 +347,31 @@ if __name__ == "__main__":
         args.stage = args.stage + 1
 
     if args.stage == 2:
-        run_MarKDuplicates(configuration)
-        args.stage = args.stage + 1
-
-    if args.stage == 3:
         run_RealignIndels(configuration)
         args.stage = args.stage + 1
 
-    if args.stage == 4:
+    if args.stage == 3:
         run_Recalibrator(configuration)
         args.stage = args.stage + 1
 
-    if args.stage == 5:
-        run_HaplotypeCaller(configuration)
-        args.stage = args.stage + 1
+    # if args.stage == 4:
+    #     run_HaplotypeCaller(configuration)
+    #     args.stage = args.stage + 1
 
-    if args.stage == 6:
-        run_AnnotationAndFilters(configuration)
-        args.stage = args.stage + 1
+    # if args.stage == 5:
+    #     run_AnnotationAndFilters(configuration)
+    #     args.stage = args.stage + 1
 
-    if args.stage == 7:
-        run_Normalization(configuration)
-        args.stage = args.stage + 1
+    # if args.stage == 6:
+    #     run_Normalization(configuration)
+    #     args.stage = args.stage + 1
 
-    if args.stage == 8:
-         run_SNPEff(configuration)
-         args.stage = args.stage + 1
+    # if args.stage == 7:
+    #      run_SNPEff(configuration)
+    #      args.stage = args.stage + 1
 
-    if args.stage == 9:
-         run_GEMINI(configuration)
-         args.stage = args.stage + 1
+    # if args.stage == 8:
+    #      run_GEMINI(configuration)
+    #      args.stage = args.stage + 1
 
     sys.stdout.write("Completed pipeline\n")
