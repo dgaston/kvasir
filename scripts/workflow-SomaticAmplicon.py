@@ -28,7 +28,7 @@ def run_bwa(configuration):
             logfile = "%s.bwa.log" % sample['name']
             command = ("""bwa mem -t %s -M -v 2 %s %s %s | """
                        """samtools view -b -S -u - | samtools sort -@ %s - %s""" \
-                       % (configuration['num_cores'], sample['rg_id'], sample['rg_sm'], configuration['reference_genome'],
+                       % (configuration['num_cores'], configuration['reference_genome'],
                           sample['fastq1'], sample['fastq2'], configuration['num_cores'], output))
 
             code = pipe.runAndLogCommand(command, logfile)
@@ -53,8 +53,8 @@ def run_AddOrReplaceReadGroups(configuration):
 
         logfile = "%s.addorreplacerg.log" % sample['name']
 
-        command = ("java -Xmx4g -jar %s/AddOrReplaceReadGroups.jar INPUT=%s OUTPUT=%s RGID=%s RGLB=%s RGPL=illumina RGPU=miseq RGSM=%s"
-                   % (configuration['picard_bin_dir'], input, output, sample['name'], sample['name'], sample['name']))
+        command = ("java -Xmx4g -jar %s/AddOrReplaceReadGroups.jar INPUT=%s OUTPUT=%s RGID=%s RGSM=%s RGLB=%s RGPL=illumina RGPU=miseq"
+                   % (configuration['picard_bin_dir'], input, output, sample['rg_id'], sample['rg_sm'], sample['rg_sm']))
 
         instructions.append((command, logfile))
 
