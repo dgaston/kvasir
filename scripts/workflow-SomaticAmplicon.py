@@ -290,7 +290,7 @@ def run_HaplotypeCaller(configuration):
     sys.stdout.write("Finished Joint Genotyping Cohort\n")
 
 def run_MuTect_Matched(configuration):
-    '''Run MuTect in matched tumor/normal mode''''
+    '''Run MuTect in matched tumor/normal mode'''
 
 def run_MuTect_Unmatched(configuration):
     '''Run MuTect without a matched normal sample'''
