@@ -43,6 +43,7 @@ def run_AddOrReplaceReadGroups(configuration):
     
     pool = Pool(processes=int(configuration['num_cores']))
     instructions = []
+    instructions2 = []
 
     sys.stdout.write("Adding Read Group Information\n")
     for sample in configuration['samples']:
@@ -52,22 +53,33 @@ def run_AddOrReplaceReadGroups(configuration):
         output = "%s.rg.sorted.bam" % sample['name']
 
         logfile = "%s.addorreplacerg.log" % sample['name']
+        logfile2 = "%s.buildindex.log" % sample['name']
 
         command = ("java -Xmx4g -jar %s/AddOrReplaceReadGroups.jar INPUT=%s OUTPUT=%s RGID=%s RGSM=%s RGLB=%s RGPL=illumina RGPU=miseq"
                    % (configuration['picard_bin_dir'], input, output, sample['rg_id'], sample['rg_sm'], sample['rg_sm']))
+        
+        command2 = ("java -Xmx4g -jar %s/BuildBAmIndex.jar INPUT=%s"
+                   % (configuration['picard_bin_dir'], output, output))
 
         instructions.append((command, logfile))
+        instructions2.append((command2, logfile2))
 
     sys.stdout.write("Adding read group data\n")
-
     result = pool.map_async(pipe.runMulti, instructions)
     codes = result.get()
     pool.close()
     pool.join()
-
     pipe.checkReturnCodes(codes)
-
     sys.stdout.write("Finished adding read group data\n")
+    
+    sys.stdout.write("Building BAM indices\n")
+    pool2 = Pool(processes=int(configuration['num_cores']))
+    result2 = pool2.map_async(pipe.runMulti, instructions2)
+    codes2 = result2.get()
+    pool2.close()
+    pool2.join()
+    pipe.checkReturnCodes(codes2)
+    sys.stdout.write("Finished building BAM indexes\n")
 
 
 def run_RealignIndels(configuration):
