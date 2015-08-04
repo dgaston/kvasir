@@ -80,7 +80,7 @@ def run_RealignIndels(configuration):
     for sample in configuration['samples']:
         sys.stdout.write("Running TargetCreator for sample %s\n" % sample['name'])
 
-        input = "%s.sorted.bam" % sample['name']
+        input = "%s.rg.sorted.bam" % sample['name']
         targets = "%s.targets.intervals" % sample['name']
         output = "%s.realigned.sorted.bam" % sample['name']
 
