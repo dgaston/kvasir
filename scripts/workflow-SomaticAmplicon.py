@@ -26,7 +26,7 @@ def run_bwa(configuration):
             sys.stdout.write("Running BWA for sample %s\n" % sample['name'])
             output = "%s.sorted" % sample['name']
             logfile = "%s.bwa.log" % sample['name']
-            command = ("""bwa mem -t %s -R '@RG\tID:%s\tSM:%s\tPL:illumina' -M -v 2 %s %s %s | """
+            command = ("""bwa mem -t %s -M -v 2 %s %s %s | """
                        """samtools view -b -S -u - | samtools sort -@ %s - %s""" \
                        % (configuration['num_cores'], sample['rg_id'], sample['rg_sm'], configuration['reference_genome'],
                           sample['fastq1'], sample['fastq2'], configuration['num_cores'], output))
@@ -37,6 +37,37 @@ def run_bwa(configuration):
             sys.stdout.write("Finished BWA for sample: %s\n" % sample['name'])
 
     sys.stdout.write("Finished BWA\n")
+
+def run_AddOrReplaceReadGroups(configuration):
+    '''Run AddOrReplaceReadGroups'''
+    
+    pool = Pool(processes=int(configuration['num_cores']))
+    instructions = []
+
+    sys.stdout.write("Adding Read Group Information\n")
+    for sample in configuration['samples']:
+        sys.stdout.write("Creating AddOrReplaceReadGroups command for sample %s\n" % sample['name'])
+
+        input = "%s.sorted.bam" % sample['name']
+        output = "%s.rg.sorted.bam" % sample['name']
+
+        logfile = "%s.addorreplacerg.log" % sample['name']
+
+        command = ("java -Xmx4g -jar %s/AddOrReplaceReadGroups.jar INPUT=%s OUTPUT=%s RGID=%s RGLB=%s RGPL=illumina RGPU=miseq RGSM=%s"
+                   % (configuration['picard_bin_dir'], input, output, sample['name'], sample['name'], sample['name']))
+
+        instructions.append((command, logfile))
+
+    sys.stdout.write("Adding read group data\n")
+
+    result = pool.map_async(pipe.runMulti, instructions)
+    codes = result.get()
+    pool.close()
+    pool.join()
+
+    pipe.checkReturnCodes(codes)
+
+    sys.stdout.write("Finished adding read group data\n")
 
 
 def run_RealignIndels(configuration):
@@ -345,32 +376,36 @@ if __name__ == "__main__":
     if args.stage == 1:
         run_bwa(configuration)
         args.stage = args.stage + 1
-
+    
     if args.stage == 2:
-        run_RealignIndels(configuration)
+        run_AddOrReplaceReadGroups(configuration)
         args.stage = args.stage + 1
 
     if args.stage == 3:
+        run_RealignIndels(configuration)
+        args.stage = args.stage + 1
+
+    if args.stage == 4:
         run_Recalibrator(configuration)
         args.stage = args.stage + 1
 
-    # if args.stage == 4:
+    # if args.stage == 5:
     #     run_HaplotypeCaller(configuration)
     #     args.stage = args.stage + 1
 
-    # if args.stage == 5:
+    # if args.stage == 6:
     #     run_AnnotationAndFilters(configuration)
     #     args.stage = args.stage + 1
 
-    # if args.stage == 6:
+    # if args.stage == 7:
     #     run_Normalization(configuration)
     #     args.stage = args.stage + 1
 
-    # if args.stage == 7:
+    # if args.stage == 8:
     #      run_SNPEff(configuration)
     #      args.stage = args.stage + 1
 
-    # if args.stage == 8:
+    # if args.stage == 9:
     #      run_GEMINI(configuration)
     #      args.stage = args.stage + 1
 
