@@ -58,7 +58,7 @@ def run_AddOrReplaceReadGroups(configuration):
         command = ("java -Xmx4g -jar %s/AddOrReplaceReadGroups.jar INPUT=%s OUTPUT=%s RGID=%s RGSM=%s RGLB=%s RGPL=illumina RGPU=miseq"
                    % (configuration['picard_bin_dir'], input, output, sample['rg_id'], sample['rg_sm'], sample['rg_sm']))
         
-        command2 = ("java -Xmx4g -jar %s/BuildBAmIndex.jar INPUT=%s"
+        command2 = ("java -Xmx4g -jar %s/BuildBamIndex.jar INPUT=%s"
                    % (configuration['picard_bin_dir'], output))
 
         instructions.append((command, logfile))
@@ -288,6 +288,24 @@ def run_HaplotypeCaller(configuration):
     code = pipe.runAndLogCommand(command, logfile)
     pipe.checkReturnCode(code)
     sys.stdout.write("Finished Joint Genotyping Cohort\n")
+
+def run_MuTect_Matched(configuration):
+    '''Run MuTect in matched tumor/normal mode''''
+
+def run_MuTect_Unmatched(configuration):
+    '''Run MuTect without a matched normal sample'''
+
+def run_MuTect_PON(configuration):
+    '''Run MuTect with a synthetic Panel of Normals'''
+
+def run_FreeBayes_Matched(configuration):
+    '''Run FreeBayes in matched tumor/normal mode'''
+
+def run_FreeBayes_UnMatched(configuration):
+    '''Run FreeBayes without a matched normal sample'''
+
+def run_VarDict_UnMatched(configuration):
+    '''Run VarDict without a matched normal sample'''
 
 
 def run_AnnotationAndFilters(configuration):
