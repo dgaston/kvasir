@@ -59,7 +59,7 @@ def run_AddOrReplaceReadGroups(configuration):
                    % (configuration['picard_bin_dir'], input, output, sample['rg_id'], sample['rg_sm'], sample['rg_sm']))
         
         command2 = ("java -Xmx4g -jar %s/BuildBAmIndex.jar INPUT=%s"
-                   % (configuration['picard_bin_dir'], output, output))
+                   % (configuration['picard_bin_dir'], output))
 
         instructions.append((command, logfile))
         instructions2.append((command2, logfile2))
