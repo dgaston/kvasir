@@ -26,7 +26,7 @@ def run_bwa(configuration):
             sys.stdout.write("Running BWA for sample %s\n" % sample['name'])
             output = "%s.sorted" % sample['name']
             logfile = "%s.bwa.log" % sample['name']
-            command = ("""bwa mem -t %s -R "@RG\tID:%s\tSM:%s\tPL:illumina" -M -v 2 %s %s %s | """
+            command = ("""bwa mem -t %s -R '@RG\tID:%s\tSM:%s\tPL:illumina' -M -v 2 %s %s %s | """
                        """samtools view -b -S -u - | samtools sort -@ %s - %s""" \
                        % (configuration['num_cores'], sample['rg_id'], sample['rg_sm'], configuration['reference_genome'],
                           sample['fastq1'], sample['fastq2'], configuration['num_cores'], output))
