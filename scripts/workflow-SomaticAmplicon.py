@@ -313,7 +313,7 @@ def run_FreeBayes_UnMatched(configuration):
         logfile = "%s.freebayes_unmatched.log" % sample['name']
         
         command = ("%s --fasta-reference %s --min-alternate-fraction %s --pooled-discrete --pooled-continuous --genotype-qualities --report-genotype-likelihood-max --allele-balance-priors-off --min-repeat-entropy 1 %s > %s"
-                % (configuration['freebayes_bin'], configuration['reference'], 
+                % (configuration['freebayes_bin'], configuration['reference_genome'], 
                 configuration['fb_min_alt'], sample_bam, output))
                 
         instructions.append((command, logfile))
