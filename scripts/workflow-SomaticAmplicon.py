@@ -428,19 +428,21 @@ def run_SNPEff(configuration):
 
 def run_GEMINI(configuration):
     '''Run GEMINI'''
+    
+    instructions = []
+    for sample in configuration['samples']:
+        snpEff_vcf = "%s.snpEff.%s.vcf" % (sample['name'], configuration['snpeff_reference'])
+        gemini_db = "%s.snpEff.%s.db" % (sample['name'], configuration['snpeff_reference'])
+        logfile = "%s.gemini.log" % sample['name']
 
-    snpEff_vcf = "%s.snpEff.%s.vcf" % (configuration['project_name'], configuration['snpeff_reference'])
-    gemini_db = "%s.snpEff.%s.db" % (configuration['project_name'], configuration['snpeff_reference'])
-    logfile = "%s.gemini.log" % configuration['project_name']
+        command = ("%s load --cores %s -v %s -t snpEff %s" %
+                (configuration['gemini_docker'], configuration['num_cores'], snpEff_vcf, gemini_db))
 
-    command = ("%s load --cores %s -v %s -t snpEff %s" %
-               (configuration['gemini_docker'], configuration['num_cores'], snpEff_vcf, gemini_db))
+        sys.stdout.write("Running GEMINI for sample %s\n" % sample['name'])
+        code = pipe.runAndLogCommand(command, logfile)
+        pipe.checkReturnCode(code)
 
-    sys.stdout.write("Running GEMINI\n")
-    code = pipe.runAndLogCommand(command, logfile)
-    pipe.checkReturnCode(code)
-
-    sys.stdout.write("Finished GEMINI\n")
+    sys.stdout.write("Finished GEMINI for all samples\n")
 
 
 if __name__ == "__main__":
@@ -487,8 +489,8 @@ if __name__ == "__main__":
          run_SNPEff(configuration)
          args.stage = args.stage + 1
 
-    # if args.stage == 9:
-    #      run_GEMINI(configuration)
-    #      args.stage = args.stage + 1
+    if args.stage == 9:
+         run_GEMINI(configuration)
+         args.stage = args.stage + 1
 
     sys.stdout.write("Completed pipeline\n")
