@@ -387,7 +387,7 @@ def run_Normalization(configuration):
     instructions = []
     for sample in configuration['samples']:
         filtered_vcf = "%s.freebayes.filtered.vcf" % sample['name']
-        normalized_vcf = "%s.fnormalized.vcf" % sample['name']
+        normalized_vcf = "%s.normalized.vcf" % sample['name']
         logfile = "%s.vt_norm.log" % sample['name']
 
         command = ("zless %s | sed 's/ID=AD.Number=./ID=AD,Number=R/' | vt decompose -s - | vt normalize -r %s - > %s" %
@@ -405,19 +405,25 @@ def run_Normalization(configuration):
 
 def run_SNPEff(configuration):
     '''Run snpEff Annotations'''
+    
+    instructions = []
+    for sample in configuration['samples']:
+        normalized_vcf = "%s.normalized.vcf" % configuration['project_name']
+        snpEff_vcf = "%s.snpEff.%s.vcf" % (configuration['project_name'], configuration['snpeff_reference'])
+        logfile = "%s.snpeff.log" % configuration['project_name']
 
-    normalized_vcf = "%s.normalized.vcf" % configuration['project_name']
-    snpEff_vcf = "%s.snpEff.%s.vcf" % (configuration['project_name'], configuration['snpeff_reference'])
-    logfile = "%s.snpeff.log" % configuration['project_name']
-
-    command = ("java -Xmx12G -jar %s -classic -formatEff -v %s %s > %s" %
-               (configuration['snpeff_bin'], configuration['snpeff_reference'], normalized_vcf, snpEff_vcf))
+        command = ("java -Xmx12G -jar %s -classic -formatEff -v %s %s > %s" %
+                (configuration['snpeff_bin'], configuration['snpeff_reference'], normalized_vcf, snpEff_vcf))
+                
+        instructions.append((command, logfile))
 
     sys.stdout.write("Running snpEff\n")
-    code = pipe.runAndLogCommand(command, logfile)
-    pipe.checkReturnCode(code)
-
-    sys.stdout.write("Finished snpEff\n")
+    pool = Pool(processes=int(configuration['num_cores']))
+    result = pool.map_async(pipe.runMulti, instructions)
+    codes = result.get()
+    pool.close()
+    pool.join()
+    pipe.checkReturnCodes(codes)
 
 
 def run_GEMINI(configuration):
