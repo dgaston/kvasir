@@ -342,14 +342,14 @@ def run_AnnotationAndFilters(configuration):
     instructions2 = []
 
     for sample in configuration['samples']:
-        sample_bam = "-I %s.recalibrated.sorted.bam" % sample['name']
+        sample_bam = "%s.recalibrated.sorted.bam" % sample['name']
 
-        raw_vcf = "%s.freebayes.vcf" % configuration['name']
-        annotated_vcf = "%s.freebayes.annotated.vcf" % configuration['name']
-        filtered_vcf = "%s.freebayes.filtered.vcf" % configuration['name']
+        raw_vcf = "%s.freebayes.vcf" % sample['name']
+        annotated_vcf = "%s.freebayes.annotated.vcf" % sample['name']
+        filtered_vcf = "%s.freebayes.filtered.vcf" % sample['name']
 
-        logfile1 = "%s.variantannotation.log" % configuration['name']
-        logfile2 = "%s.variantfiltration.log" % configuration['name']
+        logfile1 = "%s.variantannotation.log" % sample['name']
+        logfile2 = "%s.variantfiltration.log" % sample['name']
 
         command1 = (
             "java -Xmx4g -jar %s -T VariantAnnotator -R %s -I %s -o %s --variant %s -L %s --dbsnp %s -nt %s --group StandardAnnotation" %
