@@ -338,36 +338,45 @@ def run_VarDict_UnMatched(configuration):
 def run_AnnotationAndFilters(configuration):
     '''GATK Annotate and Variant Filters'''
 
-    sample_inputs = []
+    instructions1 = []
+    instructions2 = []
 
     for sample in configuration['samples']:
-        sample = "-I %s.recalibrated.sorted.bam" % sample['name']
-        sample_inputs.append(sample)
+        sample_bam = "-I %s.recalibrated.sorted.bam" % sample['name']
 
-    sample_bam_string = " ".join(sample_inputs)
+        raw_vcf = "%s.freebayes.vcf" % configuration['name']
+        annotated_vcf = "%s.freebayes.annotated.vcf" % configuration['name']
+        filtered_vcf = "%s.freebayes.filtered.vcf" % configuration['name']
 
-    raw_vcf = "%s.raw.vcf" % configuration['project_name']
-    annotated_vcf = "%s.annotated.vcf" % configuration['project_name']
-    filtered_vcf = "%s.filtered.vcf" % configuration['project_name']
+        logfile1 = "%s.variantannotation.log" % configuration['name']
+        logfile2 = "%s.variantfiltration.log" % configuration['name']
 
-    logfile1 = "%s.variantannotation.log" % configuration['project_name']
-    logfile2 = "%s.variantfiltration.log" % configuration['project_name']
-
-    command1 = (
-        "java -Xmx4g -jar %s -T VariantAnnotator -R %s %s -o %s --variant %s -L %s --dbsnp %s -nt %s --group StandardAnnotation" %
-        (configuration['gatk_bin'], configuration['reference_genome'], sample_bam_string, annotated_vcf, raw_vcf, raw_vcf,
-         configuration['dbsnp'], configuration['num_cores']))
-    command2 = (
-        "java -Xmx4g -jar %s -T VariantFiltration -R %s -o %s --variant %s --filterExpression 'MQ0 > 50' --filterName 'HighMQ0' --filterExpression 'DP < 10' --filterName 'LowDepth' --filterExpression 'QUAL < 10' --filterName 'LowQual' --filterExpression 'MQ < 10' --filterName 'LowMappingQual'" %
-        (configuration['gatk_bin'], configuration['reference_genome'], filtered_vcf, annotated_vcf))
+        command1 = (
+            "java -Xmx4g -jar %s -T VariantAnnotator -R %s -I %s -o %s --variant %s -L %s --dbsnp %s -nt %s --group StandardAnnotation" %
+            (configuration['gatk_bin'], configuration['reference_genome'], sample_bam, annotated_vcf, raw_vcf, raw_vcf,
+            configuration['dbsnp'], configuration['num_cores']))
+        command2 = (
+            "java -Xmx4g -jar %s -T VariantFiltration -R %s -o %s --variant %s --filterExpression 'MQ0 > 50' --filterName 'HighMQ0' --filterExpression 'DP < 10' --filterName 'LowDepth' --filterExpression 'QUAL < 10' --filterName 'LowQual' --filterExpression 'MQ < 10' --filterName 'LowMappingQual'" %
+            (configuration['gatk_bin'], configuration['reference_genome'], filtered_vcf, annotated_vcf))
+        
+        instructions1.append((command1, logfile1))
+        instructions2.append((command2, logfile2))
 
     sys.stdout.write("Annotating variants\n")
-    code = pipe.runAndLogCommand(command1, logfile1)
-    pipe.checkReturnCode(code)
+    pool = Pool(processes=int(configuration['num_cores']))
+    result1 = pool.map_async(pipe.runMulti, instructions1)
+    codes = result1.get()
+    pool.close()
+    pool.join()
+    pipe.checkReturnCodes(codes)
 
     sys.stdout.write("Applying variant filters\n")
-    code = pipe.runAndLogCommand(command2, logfile2)
-    pipe.checkReturnCode(code)
+    pool2 = Pool(processes=int(configuration['num_cores']))
+    result2 = pool2.map_async(pipe.runMulti, instructions2)
+    codes2 = result2.get()
+    pool2.close()
+    pool2.join()
+    pipe.checkReturnCodes(codes2)
 
     sys.stdout.write("Finished annotating and filtering variants using the GATK\n")
 
@@ -450,9 +459,9 @@ if __name__ == "__main__":
         run_FreeBayes_UnMatched(configuration)
         args.stage = args.stage + 1
 
-    # if args.stage == 6:
-    #     run_AnnotationAndFilters(configuration)
-    #     args.stage = args.stage + 1
+    if args.stage == 6:
+        run_AnnotationAndFilters(configuration)
+        args.stage = args.stage + 1
 
     # if args.stage == 7:
     #     run_Normalization(configuration)
