@@ -386,8 +386,8 @@ def run_Normalization(configuration):
     
     instructions = []
     for sample in configuration['samples']:
-        filtered_vcf = "%s.filtered.vcf" % sample['name']
-        normalized_vcf = "%s.normalized.vcf" % sample['name']
+        filtered_vcf = "%s.freebayes.filtered.vcf" % sample['name']
+        normalized_vcf = "%s.fnormalized.vcf" % sample['name']
         logfile = "%s.vt_norm.log" % sample['name']
 
         command = ("zless %s | sed 's/ID=AD.Number=./ID=AD,Number=R/' | vt decompose -s - | vt normalize -r %s - > %s" %
