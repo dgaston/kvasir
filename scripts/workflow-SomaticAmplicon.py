@@ -283,7 +283,8 @@ def run_HaplotypeCaller(configuration):
     sys.stdout.write("Running Joint Genotyping on Cohort\n")
     gvcf_string = " ".join(gvcfs)
     command = ("java -Xmx4G -jar %s -T GenotypeGVCFs -R %s %s -o %s"
-               % (configuration['gatk_bin'], configuration['reference_genome'], gvcf_string, cohort_vcf))
+               % (configuration['gatk_bin'], configuration['reference_genome'], 
+               gvcf_string, cohort_vcf))
 
     code = pipe.runAndLogCommand(command, logfile)
     pipe.checkReturnCode(code)
@@ -303,6 +304,32 @@ def run_FreeBayes_Matched(configuration):
 
 def run_FreeBayes_UnMatched(configuration):
     '''Run FreeBayes without a matched normal sample'''
+    
+    instructions = []
+    
+    for sample in configuration['samples']:
+        sample_bam = "%s.recalibrated.sorted.bam" % sample['name']
+        output = "%s.freebayes.vcf" % sample['name']
+        logfile = "%s.freebayes_unmatched.log" % sample['name']
+        
+        command = ("%s --fasta-reference %s --min-alternate-fraction %s --pooled-discrete --pooled-continuous --genotype-qualities --report-genotype-likelihood-max --allele-balance-priors-off --min-repeat-entropy 1 %s > %s"
+                % (configuration['freebayes_bin'], configuration['reference'], 
+                configuration['fb_min_alt'], sample_bam, output))
+                
+        instructions.append((command, logfile))
+    
+    sys.stdout.write("Running FreeBayes for samples in project %s\n" % configuration['project_name'])
+    pool = Pool(processes=int(configuration['num_cores']))
+    result = pool.map_async(pipe.runMulti, instructions)
+    codes = result.get()
+    pool.close()
+    pool.join()
+
+    pipe.checkReturnCodes(codes)
+    sys.stdout.write("Finished Running FreeBayes\n")
+    
+def run_VarDict_Matched(configuration):
+    '''Run VarDict in matched tumor/normal mode'''
 
 def run_VarDict_UnMatched(configuration):
     '''Run VarDict without a matched normal sample'''
@@ -419,9 +446,9 @@ if __name__ == "__main__":
         run_Recalibrator(configuration)
         args.stage = args.stage + 1
 
-    # if args.stage == 5:
-    #     run_HaplotypeCaller(configuration)
-    #     args.stage = args.stage + 1
+    if args.stage == 5:
+        run_FreeBayes_UnMatched(configuration)
+        args.stage = args.stage + 1
 
     # if args.stage == 6:
     #     run_AnnotationAndFilters(configuration)
