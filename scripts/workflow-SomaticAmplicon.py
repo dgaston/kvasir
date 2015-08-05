@@ -382,16 +382,26 @@ def run_AnnotationAndFilters(configuration):
 
 
 def run_Normalization(configuration):
-    filtered_vcf = "%s.filtered.vcf" % configuration['project_name']
-    normalized_vcf = "%s.normalized.vcf" % configuration['project_name']
-    logfile = "%s.vt_norm.log" % configuration['project_name']
+    '''Decompose and left nomralize variants'''
+    
+    instructions = []
+    for sample in configuration['samples']:
+        filtered_vcf = "%s.filtered.vcf" % sample['name']
+        normalized_vcf = "%s.normalized.vcf" % sample['name']
+        logfile = "%s.vt_norm.log" % sample['name']
 
-    sys.stdout.write("Performing normalization\n")
-    command = ("zless %s | sed 's/ID=AD.Number=./ID=AD,Number=R/' | vt decompose -s - | vt normalize -r %s - > %s" %
-               (filtered_vcf, configuration['reference_genome'], normalized_vcf))
-    code = pipe.runAndLogCommand(command, logfile)
-    pipe.checkReturnCode(code)
-    sys.stdout.write("Finished Normalizing VCF\n")
+        command = ("zless %s | sed 's/ID=AD.Number=./ID=AD,Number=R/' | vt decompose -s - | vt normalize -r %s - > %s" %
+                (filtered_vcf, configuration['reference_genome'], normalized_vcf))
+    
+        instructions.append((command, logfile))
+    
+    sys.stdout.write("Running normalization\n")
+    pool = Pool(processes=int(configuration['num_cores']))
+    result = pool.map_async(pipe.runMulti, instructions)
+    codes = result.get()
+    pool.close()
+    pool.join()
+    pipe.checkReturnCodes(codes)
 
 def run_SNPEff(configuration):
     '''Run snpEff Annotations'''
