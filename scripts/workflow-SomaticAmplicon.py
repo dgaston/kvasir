@@ -408,9 +408,9 @@ def run_SNPEff(configuration):
     
     instructions = []
     for sample in configuration['samples']:
-        normalized_vcf = "%s.normalized.vcf" % configuration['project_name']
-        snpEff_vcf = "%s.snpEff.%s.vcf" % (configuration['project_name'], configuration['snpeff_reference'])
-        logfile = "%s.snpeff.log" % configuration['project_name']
+        normalized_vcf = "%s.normalized.vcf" % sample['name']
+        snpEff_vcf = "%s.snpEff.%s.vcf" % (sample['name'], configuration['snpeff_reference'])
+        logfile = "%s.snpeff.log" % sample['name']
 
         command = ("java -Xmx12G -jar %s -classic -formatEff -v %s %s > %s" %
                 (configuration['snpeff_bin'], configuration['snpeff_reference'], normalized_vcf, snpEff_vcf))
