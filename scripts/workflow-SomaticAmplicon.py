@@ -473,9 +473,9 @@ if __name__ == "__main__":
         run_AnnotationAndFilters(configuration)
         args.stage = args.stage + 1
 
-    # if args.stage == 7:
-    #     run_Normalization(configuration)
-    #     args.stage = args.stage + 1
+    if args.stage == 7:
+        run_Normalization(configuration)
+        args.stage = args.stage + 1
 
     # if args.stage == 8:
     #      run_SNPEff(configuration)
