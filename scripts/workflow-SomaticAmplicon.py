@@ -345,8 +345,8 @@ def run_AnnotationAndFilters(configuration):
         sample_bam = "%s.recalibrated.sorted.bam" % sample['name']
 
         raw_vcf = "%s.freebayes.vcf" % sample['name']
-        annotated_vcf = "%s.freebayes.annotated.vcf" % sample['name']
-        filtered_vcf = "%s.freebayes.filtered.vcf" % sample['name']
+        annotated_vcf = "%s.annotated.vcf" % sample['name']
+        filtered_vcf = "%s.filtered.vcf" % sample['name']
 
         logfile1 = "%s.variantannotation.log" % sample['name']
         logfile2 = "%s.variantfiltration.log" % sample['name']
@@ -386,7 +386,7 @@ def run_Normalization(configuration):
     
     instructions = []
     for sample in configuration['samples']:
-        filtered_vcf = "%s.freebayes.filtered.vcf" % sample['name']
+        filtered_vcf = "%s.filtered.vcf" % sample['name']
         normalized_vcf = "%s.normalized.vcf" % sample['name']
         logfile = "%s.vt_norm.log" % sample['name']
 
